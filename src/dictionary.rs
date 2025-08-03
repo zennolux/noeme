@@ -118,7 +118,7 @@ impl Source {
             |mut meaning_item, parent_element| {
                 let attr = self.get_text(parent_element, &self.meaning_attr_selector)?;
 
-                let values: Option<Vec<MeaningValue>> =
+                let values: Vec<MeaningValue> =
                     parent_element.select(&self.meaning_items_selector).fold(
                         Some(vec![]),
                         |mut meaning_values, child_element| -> Option<Vec<MeaningValue>> {
@@ -128,12 +128,9 @@ impl Source {
                             });
                             meaning_values
                         },
-                    );
+                    )?;
 
-                meaning_item.as_mut()?.push(MeaningItem {
-                    attr,
-                    values: values?,
-                });
+                meaning_item.as_mut()?.push(MeaningItem { attr, values });
 
                 meaning_item
             },
