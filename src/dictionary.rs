@@ -83,14 +83,14 @@ impl Source {
         })
     }
 
-    pub(crate) fn get_text<'a, T>(&self, document: T, selector: &Selector) -> Option<String>
+    fn get_text<'a, T>(&self, document: T, selector: &Selector) -> Option<String>
     where
         T: Selectable<'a>,
     {
         Some(document.select(selector).next()?.text().collect::<String>())
     }
 
-    pub(crate) fn find_pronunciation(&self) -> Option<Pronunciation> {
+    fn find_pronunciation(&self) -> Option<Pronunciation> {
         let phonetic_symbol = self
             .get_text(&self.document, &self.pronunciation_selector)?
             .split("[")
@@ -112,7 +112,7 @@ impl Source {
         })
     }
 
-    pub(crate) fn find_meanings(&self) -> Option<Vec<MeaningItem>> {
+    fn find_meanings(&self) -> Option<Vec<MeaningItem>> {
         self.document.select(&self.meanings_selector).fold(
             Some(vec![]),
             |mut meaning_item, parent_element| {
@@ -137,7 +137,7 @@ impl Source {
         )
     }
 
-    pub(crate) fn find_sentences(&self) -> Option<Vec<SentenceItem>> {
+    fn find_sentences(&self) -> Option<Vec<SentenceItem>> {
         self.document.select(&self.sentence_items_selector).fold(
             Some(vec![]),
             |mut sentence_item, parent_element| {
@@ -170,7 +170,7 @@ impl Source {
         )
     }
 
-    pub(crate) fn has_results(&self) -> bool {
+    fn has_results(&self) -> bool {
         self.document
             .select(&self.no_results_selector)
             .next()
