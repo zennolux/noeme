@@ -183,7 +183,7 @@ impl Dictionary {
         let source = Source::new(word)?;
 
         if !source.has_results() {
-            return Err(anyhow!(format!("No results found for {}.", word)));
+            return Err(anyhow!("No results found for {:?}.", word));
         }
 
         let pronunciation = match source.find_pronunciation() {
