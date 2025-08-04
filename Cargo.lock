@@ -72,17 +72,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b8e56985ec62d17e9c1001dc89c88ecd7dc08e47eba5ec7c29c7b5eeecde967"
 
 [[package]]
-name = "biying"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "reqwest",
- "scraper",
- "tokio",
- "voca_rs",
-]
-
-[[package]]
 name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -163,6 +152,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "dictionary"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "reqwest",
+ "scraper",
+ "tokio",
+ "voca_rs",
 ]
 
 [[package]]

@@ -1,8 +1,9 @@
 use anyhow::Result;
-use biying::dictionary::Dictionary;
+
+use dictionary::Dictionary;
 
 fn main() -> Result<()> {
-    let word = "exactly";
+    let word = "particular";
 
     let dict = Dictionary::new(word)?;
 
