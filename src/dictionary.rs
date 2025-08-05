@@ -1,29 +1,30 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, Ok, Result};
 use scraper::{selectable::Selectable, Html, Selector};
+use serde::Serialize;
 use voca_rs::strip;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 #[allow(dead_code)]
 struct Pronunciation {
     phonetic_symbol: String,
     audio_url: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 #[allow(dead_code)]
 struct MeaningValue {
     cn: String,
     en: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 #[allow(dead_code)]
 struct MeaningItem {
     attr: String,
     values: Vec<MeaningValue>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 #[allow(dead_code)]
 struct SentenceItem {
     en: String,
@@ -31,7 +32,7 @@ struct SentenceItem {
     audio_url: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 #[allow(dead_code)]
 pub struct Dictionary {
     word: String,
@@ -40,8 +41,6 @@ pub struct Dictionary {
     sentences: Vec<SentenceItem>,
 }
 
-#[derive(Debug)]
-#[allow(dead_code)]
 struct Source {
     document: Html,
     pronunciation_selector: Selector,
@@ -224,5 +223,11 @@ impl Dictionary {
             meanings,
             sentences,
         })
+    }
+
+    pub fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
     }
 }
