@@ -4,28 +4,24 @@ use serde::Serialize;
 use voca_rs::strip;
 
 #[derive(Debug, Serialize)]
-#[allow(dead_code)]
 struct Pronunciation {
     phonetic_symbol: String,
     audio_url: String,
 }
 
 #[derive(Debug, Serialize)]
-#[allow(dead_code)]
 struct MeaningValue {
     cn: String,
     en: String,
 }
 
 #[derive(Debug, Serialize)]
-#[allow(dead_code)]
 struct MeaningItem {
     attr: String,
     values: Vec<MeaningValue>,
 }
 
 #[derive(Debug, Serialize)]
-#[allow(dead_code)]
 struct SentenceItem {
     en: String,
     cn: String,
@@ -33,7 +29,6 @@ struct SentenceItem {
 }
 
 #[derive(Debug, Serialize)]
-#[allow(dead_code)]
 pub struct Dictionary {
     word: String,
     pronunciation: Pronunciation,
