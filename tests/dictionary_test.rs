@@ -1,3 +1,4 @@
+use anyhow::{anyhow, Error};
 use dictionary::Dictionary;
 
 #[test]
@@ -6,6 +7,18 @@ fn should_get_instance() {
     let result = Dictionary::new(word);
 
     assert!(result.is_ok())
+}
+
+#[test]
+fn should_get_json() -> Result<(), Error> {
+    let word = "extremely";
+    let result = Dictionary::new(word)?.to_json();
+
+    if let Ok(_) = result {
+        Ok(())
+    } else {
+        Err(anyhow!("Failed to serialize dictionary to json string"))
+    }
 }
 
 #[test]
