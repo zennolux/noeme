@@ -1,7 +1,7 @@
 use dictionary::Dictionary;
 
 #[test]
-fn should_get_dictionary() {
+fn should_get_instance() {
     let word = "extremely";
     let result = Dictionary::new(word);
 
@@ -10,7 +10,7 @@ fn should_get_dictionary() {
 
 #[test]
 #[should_panic]
-fn cannot_get_dictionary() {
+fn cannot_get_results() {
     let word = "abcijkdefguvwzyxrst";
     let result = Dictionary::new(word);
 
