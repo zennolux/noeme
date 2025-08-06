@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Ok, Result};
 use scraper::{selectable::Selectable, Html, Selector};
 use serde::Serialize;
-use voca_rs::strip;
+use voca_rs::strip::strip_tags;
 
 pub trait Jsonify {
     fn to_json(&self) -> Result<String>;
@@ -175,25 +175,35 @@ impl Source {
                     .select(&self.sentence_item_en_selector)
                     .enumerate()
                 {
-                    let cn = parent_element
-                        .select(&self.sentence_item_cn_selector)
-                        .enumerate()
-                        .find(|(idx, _e)| *idx == key)?;
+                    let find = |selector: &Selector| {
+                        parent_element
+                            .select(selector)
+                            .enumerate()
+                            .find(|(idx, _e)| *idx == key)
+                    };
 
-                    let audio = parent_element
-                        .select(&self.sentence_item_audio_selector)
-                        .enumerate()
-                        .find(|(idx, _e)| *idx == key)?;
+                    let en = strip_tags(child_element.inner_html().as_str());
 
-                    sentence_item.as_mut()?.push(SentenceItem {
-                        en: strip::strip_tags(child_element.inner_html().as_str()),
-                        cn: strip::strip_tags(cn.1.inner_html().as_str()),
-                        audio_url: format!(
-                            "{}{}",
-                            Self::URL,
-                            strip::strip_tags(audio.1.attr("data-mp3link")?)
-                        ),
-                    });
+                    let cn = strip_tags(
+                        find(&self.sentence_item_cn_selector)?
+                            .1
+                            .inner_html()
+                            .as_str(),
+                    );
+
+                    let audio_url = format!(
+                        "{}{}",
+                        Self::URL,
+                        strip_tags(
+                            find(&self.sentence_item_audio_selector)?
+                                .1
+                                .attr("data-mp3link")?
+                        )
+                    );
+
+                    sentence_item
+                        .as_mut()?
+                        .push(SentenceItem { en, cn, audio_url });
                 }
                 sentence_item
             },
