@@ -3,10 +3,22 @@ use scraper::{selectable::Selectable, Html, Selector};
 use serde::Serialize;
 use voca_rs::strip;
 
+pub trait Jsonify {
+    fn to_json(&self) -> Result<String>;
+}
+
 #[derive(Debug, Serialize)]
-struct Pronunciation {
+pub struct Pronunciation {
     phonetic_symbol: String,
     audio_url: String,
+}
+
+impl Jsonify for Pronunciation {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -16,24 +28,48 @@ struct MeaningValue {
 }
 
 #[derive(Debug, Serialize)]
-struct MeaningItem {
+pub struct MeaningItem {
     attr: String,
     values: Vec<MeaningValue>,
 }
 
+impl Jsonify for Vec<MeaningItem> {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
 #[derive(Debug, Serialize)]
-struct SentenceItem {
+pub struct SentenceItem {
     en: String,
     cn: String,
     audio_url: String,
 }
 
+impl Jsonify for Vec<SentenceItem> {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
 #[derive(Debug, Serialize)]
 pub struct Dictionary {
-    word: String,
-    pronunciation: Pronunciation,
-    meanings: Vec<MeaningItem>,
-    sentences: Vec<SentenceItem>,
+    pub word: String,
+    pub pronunciation: Pronunciation,
+    pub meanings: Vec<MeaningItem>,
+    pub sentences: Vec<SentenceItem>,
+}
+
+impl Jsonify for Dictionary {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
 }
 
 struct Source {
@@ -52,12 +88,12 @@ struct Source {
     no_results_selector: Selector,
 }
 
-const URL: &str = "https://cn.bing.com";
-
 impl Source {
+    const URL: &str = "https://cn.bing.com";
+
     #[tokio::main]
     async fn new(word: &str) -> Result<Self> {
-        let url = format!("{}/dict/search?q={}", URL, word);
+        let url = format!("{}/dict/search?q={}", Self::URL, word);
         let html = reqwest::get(url).await?.text().await?;
 
         Ok(Self {
@@ -93,7 +129,7 @@ impl Source {
 
         let audio_url = format!(
             "{}{}",
-            URL,
+            Self::URL,
             self.document
                 .select(&self.audio_selector)
                 .next()?
@@ -154,7 +190,7 @@ impl Source {
                         cn: strip::strip_tags(cn.1.inner_html().as_str()),
                         audio_url: format!(
                             "{}{}",
-                            URL,
+                            Self::URL,
                             strip::strip_tags(audio.1.attr("data-mp3link")?)
                         ),
                     });
@@ -218,11 +254,5 @@ impl Dictionary {
             meanings,
             sentences,
         })
-    }
-
-    pub fn to_json(&self) -> Result<String> {
-        let serialized = serde_json::to_string(&self)?;
-
-        Ok(serialized)
     }
 }
