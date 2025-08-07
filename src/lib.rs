@@ -1,3 +1,3 @@
-pub mod dictionary;
+pub mod explainer;
 
-pub use crate::dictionary::{Dictionary, Jsonify};
+pub use crate::explainer::{Explainer, Jsonify};

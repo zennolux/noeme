@@ -57,14 +57,14 @@ impl Jsonify for Vec<SentenceItem> {
 }
 
 #[derive(Debug, Serialize)]
-pub struct Dictionary {
+pub struct Explainer {
     pub word: String,
     pub pronunciation: Pronunciation,
     pub meanings: Vec<MeaningItem>,
     pub sentences: Vec<SentenceItem>,
 }
 
-impl Jsonify for Dictionary {
+impl Jsonify for Explainer {
     fn to_json(&self) -> Result<String> {
         let serialized = serde_json::to_string(&self)?;
 
@@ -218,7 +218,7 @@ impl Source {
     }
 }
 
-impl Dictionary {
+impl Explainer {
     pub fn new(word: &str) -> Result<Self> {
         let source = Source::new(word)?;
 

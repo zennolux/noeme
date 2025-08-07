@@ -1,23 +1,23 @@
-use dictionary::{Dictionary, Jsonify};
+use explainer::{Explainer, Jsonify};
 
 #[test]
 fn should_get_instance() {
     let word = "extremely";
-    let result = Dictionary::new(word);
+    let result = Explainer::new(word);
 
     assert!(result.is_ok())
 }
 
 #[test]
-fn specific_items_and_itself_canbe_serialized_to_json() {
+fn canbe_serialized_to_json() {
     let word = "extremely";
-    let dict = Dictionary::new(word).unwrap();
+    let explainer = Explainer::new(word).unwrap();
 
     assert!(
-        dict.pronunciation.to_json().is_ok()
-            && dict.meanings.to_json().is_ok()
-            && dict.sentences.to_json().is_ok()
-            && dict.to_json().is_ok()
+        explainer.pronunciation.to_json().is_ok()
+            && explainer.meanings.to_json().is_ok()
+            && explainer.sentences.to_json().is_ok()
+            && explainer.to_json().is_ok()
     )
 }
 
@@ -25,7 +25,7 @@ fn specific_items_and_itself_canbe_serialized_to_json() {
 #[should_panic]
 fn cannot_get_results() {
     let word = "abcijkdefguvwzyxrst";
-    let result = Dictionary::new(word);
+    let result = Explainer::new(word);
 
     assert!(
         result.is_ok(),
