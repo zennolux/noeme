@@ -6,7 +6,9 @@ Fortunately the meanings and sample sencences both include English and Chinese v
 
 ### Why explainer?
 
-Simple to understand and simple to use
+* Simple to understand(both source code and usage)
+
+* Simple to use(without providing any stuff, something like an API TOKEN)
 
 
 ### So how to use?
