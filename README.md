@@ -8,7 +8,9 @@
 
 * Simple to understand(Both source code and usage)
 
-* Easy to use(No need to provide anything, something like an API TOKEN)
+* Easy to use(It's just one line of code)
+
+* It's free!(No need to pay for anything, something like an API TOKEN)
 
 
 ### So how to use?
