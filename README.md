@@ -1,14 +1,14 @@
-### What is explainer?
+### What's explainer?
 
-It's a Rust crate that can explain a wold with pronunciation, meanings, and sample sentences.
-Fortunately the meanings and sample sencences both include English and Chinese version.
+* It can explain a given word, including its pronunciation, meanings, and sample sentences.
 
+* It's mainly used as a `Rust crate`, but also supports `WebAssembly`.
 
 ### Why explainer?
 
-* Simple to understand(both source code and usage)
+* Simple to understand(Both source code and usage)
 
-* Simple to use(without providing any stuff, something like an API TOKEN)
+* Easy to use(No need to provide anything, something like an API TOKEN)
 
 
 ### So how to use?
