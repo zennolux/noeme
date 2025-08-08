@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.98"
+clap = { version = "4.5.43", features = ["derive"] }
 reqwest = "0.12.22"
 scraper = "0.23.1"
 serde = { version = "1.0.219", features = ["derive"] }
