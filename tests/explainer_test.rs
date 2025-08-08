@@ -3,7 +3,7 @@ use explainer::{Explainer, Jsonify};
 #[test]
 fn should_get_instance() {
     let word = "extremely";
-    let result = Explainer::new(word);
+    let result = Explainer::from(word);
 
     assert!(result.is_ok())
 }
@@ -11,7 +11,7 @@ fn should_get_instance() {
 #[test]
 fn canbe_serialized_to_json() {
     let word = "extremely";
-    let explainer = Explainer::new(word).unwrap();
+    let explainer = Explainer::from(word).unwrap();
 
     assert!(
         explainer.pronunciation.to_json().is_ok()
@@ -25,7 +25,7 @@ fn canbe_serialized_to_json() {
 #[should_panic]
 fn cannot_get_results() {
     let word = "abcijkdefguvwzyxrst";
-    let result = Explainer::new(word);
+    let result = Explainer::from(word);
 
     assert!(
         result.is_ok(),

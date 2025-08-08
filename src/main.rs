@@ -7,9 +7,9 @@ use explainer::{Explainer, Jsonify};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let explainer = Explainer::new(cli.word.as_str())?.to_json()?;
+    let json_str = Explainer::from(cli.word.as_str())?.to_json()?;
 
-    println!("{:?}", explainer);
+    println!("{:?}", json_str);
 
     Ok(())
 }

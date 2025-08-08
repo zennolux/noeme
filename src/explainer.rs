@@ -219,7 +219,7 @@ impl Source {
 }
 
 impl Explainer {
-    pub fn new(word: &str) -> Result<Self> {
+    pub fn from(word: &str) -> Result<Self> {
         let source = Source::new(word)?;
 
         if !source.has_results() {
