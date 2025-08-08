@@ -1,37 +1,37 @@
-### What's explainer?
+#### What's explainer?
 
-* It can explain a given word, including its pronunciation, meanings, and sample sentences.
+* It plays the roles of:  `Rust crate`, `CLI tool`, and even `WebAssembly`.
 
-* It's mainly used as a `Rust crate`, but also supports `WebAssembly`.
+* Its purpose is to explain a given word, including its pronunciation, meanings, and sample sentences.
 
-### Why explainer?
+#### Why explainer?
 
-* Simple to understand(Both source code and usage)
+* Simple to understand and easy to use.
 
-* Easy to use(It's just one line of code)
+* It's absolutely free!(No need to pay for anything, something like an API TOKEN)
 
-* It's free!(No need to pay for anything, something like an API TOKEN)
+#### How to use?
 
-
-### So how to use?
+> ##### As a Rust crate
 
 ```rust
-
 use explainer::{Explainer,Jsonify}
 
 //define a valid word
 let word = "exactly";
 
 //this will get the instance
-let explainer = Explainer::new(word).unwrap();
+let explainer = Explainer::from(word).unwrap();
 
-//get the json string
+//serialize the whole instance to json
 let result = explainer.to_json().unwrap();
 
-//and the fields `pronunciation`, `meanings`, `sentences` canbe sepatated and serialized to json
+//or just serialize the pronunciation field to json
 let pronunciation = explainer.pronunciation.to_json().unwrap();
 
+//or just serialize the meanings field to json
 let meanings = explainer.meanings.to_json().unwrap();
 
+//or just serialize the sentences field to json
 let sentences = explainer.sentences.to_json().unwrap();
 ```
