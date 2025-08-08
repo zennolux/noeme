@@ -14,6 +14,11 @@
 
 > ##### As a Rust crate
 
+```sh
+cargo add explainer
+
+```
+
 ```rust
 use explainer::{Explainer,Jsonify}
 
