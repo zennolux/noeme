@@ -14,7 +14,7 @@
 
 #### How to use?
 
-> ##### As a Rust crate
+> ##### Using as a Rust crate
 
 ```sh
 cargo add explainer
@@ -42,7 +42,7 @@ let meanings = explainer.meanings.to_json().unwrap();
 let sentences = explainer.sentences.to_json().unwrap();
 ```
 
-> ##### As a CLI tool 
+> ##### Using as a CLI tool 
 
 ```sh
 cargo install --git https://github.com/zennolux/explainer.git
