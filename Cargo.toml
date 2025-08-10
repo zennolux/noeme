@@ -3,6 +3,15 @@ name = "explainer"
 version = "0.1.0"
 edition = "2021"
 
+descripton = "Explain a given word, including its pronunciation, meanings, and sample sentences."
+keywords = ["explainer" ,"translator", "dictionary"]
+
+authors = ["zennolux <zennolux@gmail.com>"]
+license = "MIT"
+
+repository = "https://github.com/zennolux/explainer"
+readme = "README.md"
+
 [dependencies]
 anyhow = "1.0.98"
 clap = { version = "4.5.43", features = ["derive"] }
