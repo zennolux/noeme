@@ -45,7 +45,7 @@ let sentences = explainer.sentences.to_json().unwrap();
 > ##### Using as a CLI tool 
 
 ```sh
-cargo install --git https://github.com/zennolux/explainer.git
+cargo install explainer
 
 explainer test
 ```
