@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Ok, Result};
+use anyhow::{anyhow, Result};
 use scraper::{selectable::Selectable, Html, Selector};
 use serde::Serialize;
 use voca_rs::strip::strip_tags;
@@ -98,19 +98,27 @@ impl Source {
 
         Ok(Self {
             document: Html::parse_document(html.as_str()),
-            pronunciation_selector: Selector::parse(".hd_prUS").unwrap(),
-            audio_selector: Selector::parse("#bigaud_us").unwrap(),
-            meanings_selector: Selector::parse("#newLeId .each_seg").unwrap(),
-            meaning_attr_selector: Selector::parse(".pos_lin .pos").unwrap(),
-            meaning_items_selector: Selector::parse(".def_pa").unwrap(),
-            meaning_item_cn_selector: Selector::parse(".bil, .b_primtxt").unwrap(),
-            meaning_item_en_selector: Selector::parse(".val, .b_regtxt").unwrap(),
-            sentence_items_selector: Selector::parse(".se_li1").unwrap(),
-            sentence_item_en_selector: Selector::parse(".sen_en").unwrap(),
-            sentence_item_cn_selector: Selector::parse(".sen_cn").unwrap(),
-            sentence_item_audio_selector: Selector::parse(".bdsen_audio").unwrap(),
-            no_results_selector: Selector::parse(".no_results").unwrap(),
+            pronunciation_selector: Self::parse_selector(".hd_prUS")?,
+            audio_selector: Self::parse_selector("#bigaud_us")?,
+            meanings_selector: Self::parse_selector("#newLeId .each_seg")?,
+            meaning_attr_selector: Self::parse_selector(".pos_lin .pos")?,
+            meaning_items_selector: Self::parse_selector(".def_pa")?,
+            meaning_item_cn_selector: Self::parse_selector(".bil, .b_primtxt")?,
+            meaning_item_en_selector: Self::parse_selector(".val, .b_regtxt")?,
+            sentence_items_selector: Self::parse_selector(".se_li1")?,
+            sentence_item_en_selector: Self::parse_selector(".sen_en")?,
+            sentence_item_cn_selector: Self::parse_selector(".sen_cn")?,
+            sentence_item_audio_selector: Self::parse_selector(".bdsen_audio")?,
+            no_results_selector: Self::parse_selector(".no_results")?,
         })
+    }
+
+    fn parse_selector(selectors: &str) -> Result<Selector> {
+        if let Ok(selector) = Selector::parse(selectors) {
+            Ok(selector)
+        } else {
+            Err(anyhow!("Unable to parse selectors {:?}", selectors))
+        }
     }
 
     fn get_text<'a, T>(&self, document: T, selector: &Selector) -> Option<String>
