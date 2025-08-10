@@ -219,6 +219,15 @@ impl Source {
 }
 
 impl Explainer {
+    /// Create explainer instance
+    ///
+    /// # Examples
+    /// ```
+    /// let word = "exactly"
+    /// let explainer = Explainer::from(word);
+    ///
+    /// assert!(explainer.is_ok());
+    /// ```
     pub fn from(word: &str) -> Result<Self> {
         let source = Source::new(word)?;
 
