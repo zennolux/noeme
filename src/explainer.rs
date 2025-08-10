@@ -219,11 +219,13 @@ impl Source {
 }
 
 impl Explainer {
-    /// Create explainer instance
+    /// Create explainer instance.
     ///
     /// # Examples
     /// ```
-    /// let word = "exactly"
+    /// use explainer::Explainer;
+    ///
+    /// let word = "exactly";
     /// let explainer = Explainer::from(word);
     ///
     /// assert!(explainer.is_ok());
