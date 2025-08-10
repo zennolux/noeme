@@ -3,7 +3,7 @@ name = "explainer"
 version = "0.1.0"
 edition = "2021"
 
-descripton = "Explain a given word, including its pronunciation, meanings, and sample sentences."
+description = "Explain a given word, including its pronunciation, meanings, and sample sentences."
 keywords = ["explainer" ,"translator", "dictionary"]
 
 authors = ["zennolux <zennolux@gmail.com>"]
