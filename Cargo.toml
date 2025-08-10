@@ -1,6 +1,6 @@
 [package]
 name = "explainer"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 description = "Explain a given word, including its pronunciation, meanings, and sample sentences."
