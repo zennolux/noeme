@@ -154,7 +154,9 @@ impl Source {
         self.document.select(&self.meanings_selector).fold(
             Some(vec![]),
             |mut meaning_item, parent_element| {
-                let attr = self.get_text(parent_element, &self.meaning_attr_selector)?;
+                let attr = self
+                    .get_text(parent_element, &self.meaning_attr_selector)?
+                    .replace(".", "");
 
                 let values: Vec<MeaningValue> =
                     parent_element.select(&self.meaning_items_selector).fold(
