@@ -1,7 +1,5 @@
 mod cli;
 
-use std::fs;
-
 use anyhow::Result;
 use clap::Parser;
 use cli::Cli;
