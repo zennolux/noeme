@@ -1,8 +1,7 @@
-> [! WARNING]
+> ⚠️ WARNING
 
 > This project only support chinese ip to use.
 
-> If you are't in china, or use a proxy out of china, it definitely does't work!
 
 ***
 
@@ -10,7 +9,7 @@
 
 * Its purpose is to explain a given word, including its pronunciation, meanings, and sample sentences.
 
-* Here are two sample-result to let you quickly check if this meets your needs: like [test](https://github.com/zennolux/explainer/blob/main/sample-result/test.json) and [exactly](https://github.com/zennolux/explainer/blob/main/sample-result/exactly.json).
+* Here are two sample-result to let you quickly check if this meets your needs: like [test](https://github.com/zennolux/explainer/blob/main/samples/test.json) and [exactly](https://github.com/zennolux/explainer/blob/main/samples/exactly.json).
 
 #### Why explainer?
 
