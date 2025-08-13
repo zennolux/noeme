@@ -1,6 +1,6 @@
 > ⚠️ WARNING
 
-> This project only support chinese ip to use.
+> Due to the limitations of underlying dependencies, this project only supports Chinese IP usage.
 
 
 ***
