@@ -1,10 +1,16 @@
-#### What's explainer?
+> [! WARNING]
 
-* It plays the roles of:  `Rust crate`, `CLI tool`, and even `WebAssembly`.
+> This project only support chinese ip to use.
+
+> If you are't in china, or use a proxy out of china, it definitely does't work!
+
+***
+
+#### What's explainer?
 
 * Its purpose is to explain a given word, including its pronunciation, meanings, and sample sentences.
 
-* Here are two examples to let you quickly check if this meets your needs: like [test](https://github.com/zennolux/explainer/blob/main/examples/test.json) and [exactly](https://github.com/zennolux/explainer/blob/main/examples/exactly.json).
+* Here are two sample-result to let you quickly check if this meets your needs: like [test](https://github.com/zennolux/explainer/blob/main/sample-result/test.json) and [exactly](https://github.com/zennolux/explainer/blob/main/sample-result/exactly.json).
 
 #### Why explainer?
 
