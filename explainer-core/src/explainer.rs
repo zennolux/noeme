@@ -92,7 +92,7 @@ impl Source {
     const URL: &str = "https://cn.bing.com";
 
     #[tokio::main]
-    async fn new(word: &str) -> Result<Self> {
+    async fn load(word: &str) -> Result<Self> {
         let url = format!("{}/dict/search?q={}", Self::URL, word);
         let html = reqwest::get(url).await?.text().await?;
 
@@ -241,7 +241,7 @@ impl Explainer {
     /// assert!(explainer.is_ok());
     /// ```
     pub fn from(word: &str) -> Result<Self> {
-        let source = Source::new(word)?;
+        let source = Source::load(word)?;
 
         if !source.has_results() {
             return Err(anyhow!("No results found for {:?}.", word));
