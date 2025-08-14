@@ -1,10 +1,3 @@
-> ⚠️ WARNING
-
-> Due to the limitations of underlying dependencies, this project only supports Chinese IP usage.
-
-
-***
-
 #### What's explainer?
 
 * Its purpose is to explain a given word, including its pronunciation, meanings, and sample sentences.
