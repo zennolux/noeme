@@ -89,7 +89,7 @@ struct Source {
 }
 
 impl Source {
-    const URL: &str = "https://cn.bing.com";
+    const URL: &str = "https://then.dpdns.org";
 
     #[tokio::main]
     async fn load(word: &str) -> Result<Self> {
