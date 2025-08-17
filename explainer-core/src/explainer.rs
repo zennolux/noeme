@@ -89,11 +89,16 @@ struct Source {
 }
 
 impl Source {
-    const URL: &str = "https://then.dpdns.org";
+    const DOMAIN: &str = "https://bing.com";
 
-    #[tokio::main]
     async fn load(word: &str) -> Result<Self> {
-        let url = format!("{}/dict/search?q={}", Self::URL, word);
+        let mut domain = Self::DOMAIN;
+
+        if cfg!(not(target_arch = "wasm32")) {
+            domain = "https://then.dpdns.org"
+        }
+
+        let url = format!("{}/dict/search?q={}", domain, word);
         let html = reqwest::get(url).await?.text().await?;
 
         Ok(Self {
@@ -137,7 +142,7 @@ impl Source {
 
         let audio_url = format!(
             "{}{}",
-            Self::URL,
+            Self::DOMAIN,
             self.document
                 .select(&self.audio_selector)
                 .next()?
@@ -203,7 +208,7 @@ impl Source {
 
                     let audio_url = format!(
                         "{}{}",
-                        Self::URL,
+                        Self::DOMAIN,
                         strip_tags(
                             find(&self.sentence_item_audio_selector)?
                                 .1
@@ -235,13 +240,16 @@ impl Explainer {
     /// ```
     /// use explainer::Explainer;
     ///
-    /// let word = "exactly";
-    /// let explainer = Explainer::from(word);
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let word = "exactly";
+    ///     let explainer = Explainer::from(word).await;
     ///
-    /// assert!(explainer.is_ok());
+    ///     assert!(explainer.is_ok());
+    /// }
     /// ```
-    pub fn from(word: &str) -> Result<Self> {
-        let source = Source::load(word)?;
+    pub async fn from(word: &str) -> Result<Self> {
+        let source = Source::load(word).await?;
 
         if !source.has_results() {
             return Err(anyhow!("No results found for {:?}.", word));

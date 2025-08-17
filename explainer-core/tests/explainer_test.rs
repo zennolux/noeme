@@ -1,17 +1,17 @@
 use explainer::{Explainer, Jsonify};
 
-#[test]
-fn should_get_instance() {
+#[tokio::test]
+async fn should_get_instance() {
     let word = "extremely";
-    let result = Explainer::from(word);
+    let result = Explainer::from(word).await;
 
     assert!(result.is_ok())
 }
 
-#[test]
-fn canbe_serialized_to_json() {
+#[tokio::test]
+async fn canbe_serialized_to_json() {
     let word = "extremely";
-    let explainer = Explainer::from(word).unwrap();
+    let explainer = Explainer::from(word).await.unwrap();
 
     assert!(
         explainer.pronunciation.to_json().is_ok()
@@ -21,11 +21,11 @@ fn canbe_serialized_to_json() {
     )
 }
 
-#[test]
+#[tokio::test]
 #[should_panic]
-fn cannot_get_results() {
+async fn cannot_get_results() {
     let word = "abcijkdefguvwzyxrst";
-    let result = Explainer::from(word);
+    let result = Explainer::from(word).await;
 
     assert!(
         result.is_ok(),
