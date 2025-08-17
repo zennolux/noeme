@@ -94,7 +94,7 @@ impl Source {
     async fn load(word: &str) -> Result<Self> {
         let mut domain = Self::DOMAIN;
 
-        if cfg!(not(target_arch = "wasm32")) {
+        if cfg!(target_arch = "wasm32") {
             domain = "https://then.dpdns.org"
         }
 
