@@ -16,9 +16,9 @@
 
 &nbsp;&nbsp;&nbsp;See: <a href="https://crates.io/crates/explainer" target="_blank">https://crates.io/crates/explainer</a>
 
-> ##### Using as a Broswer plugin
+> ##### Using as a npm package(wasm) 
 
-&nbsp;&nbsp;&nbsp;Working in progress!
+&nbsp;&nbsp;&nbsp;See: <a href="https://www.npmjs.com/package/@zennolux/explainer-wasm?activeTab=readme" target="_blank">https://www.npmjs.com/package/@zennolux/explainer-wasm?activeTab=readme</a>
 
 > ##### Using as a CLI tool 
 
