@@ -6,48 +6,24 @@
 
 #### Why explainer?
 
-* Simple to understand and easy to use.
+* Multiple usage.
 
 * It's absolutely free!(No need to pay for anything, something like an API TOKEN).
 
-#### How to use?
+#### So how to use it?
 
 > ##### Using as a Rust crate
 
-```sh
-cargo add explainer
-```
+&nbsp;&nbsp;&nbsp;See: <a href="https://crates.io/crates/explainer" target="_blank">https://crates.io/crates/explainer</a>
 
-```rust
-use anyhow::Result;
-use explainer::{Explainer,Jsonify}
+> ##### Using as a Broswer plugin
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    //define a valid word
-    let word = "exactly";
-
-    //this will get the instance
-    let explainer = Explainer::from(word).await?;
-
-    //serialize the whole instance to json
-    let result = explainer.to_json()?;
-
-    //or just serialize the pronunciation field to json
-    let pronunciation = explainer.pronunciation.to_json()?;
-
-    //or just serialize the meanings field to json
-    let meanings = explainer.meanings.to_json()?;
-
-    //or just serialize the sentences field to json
-    let sentences = explainer.sentences.to_json()?;
-}
-```
+&nbsp;&nbsp;&nbsp;Working in progress!
 
 > ##### Using as a CLI tool 
 
-```sh
-cargo install explainer
+&nbsp;&nbsp;&nbsp;Working in progress!
 
-explainer test
-```
+> ##### Using as a Desktop applicaion 
+
+&nbsp;&nbsp;&nbsp;Working in progress!
