@@ -322,6 +322,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "explainer-cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "explainer",
+ "tokio",
+]
+
+[[package]]
 name = "explainer-wasm"
 version = "0.1.0"
 dependencies = [
