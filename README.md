@@ -16,23 +16,23 @@
 
 > ##### Using as a Rust crate
 
-&nbsp;&nbsp;&nbsp;See: <a href="https://crates.io/crates/explainer" target="_blank">https://crates.io/crates/explainer</a>
+See: [https://crates.io/crates/explainer](https://crates.io/crates/explainer)
 
 > ##### Using as a npm package(wasm) 
 
-&nbsp;&nbsp;&nbsp;See: <a href="https://www.npmjs.com/package/@zennolux/explainer-wasm?activeTab=readme" target="_blank">https://www.npmjs.com/package/@zennolux/explainer-wasm?activeTab=readme</a>
+See: [https://www.npmjs.com/package/@zennolux/explainer-wasm?activeTab=readme](https://www.npmjs.com/package/@zennolux/explainer-wasm?activeTab=readme)
 
 
 #### For end-users
 
 > ##### Using as a browser extension
 
-&nbsp;&nbsp;&nbsp;Working in progress!
+Working in progress!
 
 > ##### Using as a CLI tool 
 
-&nbsp;&nbsp;&nbsp;Working in progress!
+Working in progress!
 
 > ##### Using as a desktop applicaion 
 
-&nbsp;&nbsp;&nbsp;Working in progress!
+Working in progress!
