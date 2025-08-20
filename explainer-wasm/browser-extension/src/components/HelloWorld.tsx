@@ -5,7 +5,7 @@ export default function HelloWorld(props: { msg: string }) {
 
   return (
     <>
-      <h1>{props.msg}ssss</h1>
+      <h1>{props.msg}</h1>
 
       <div className="card">
         <button type="button" onClick={() => setCount(count + 1)}>
