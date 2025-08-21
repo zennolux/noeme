@@ -2,10 +2,26 @@ import Logo from "@/assets/crx.svg";
 import { useState } from "react";
 import "./App.css";
 import "@/index.css";
+import { explain } from "@zennolux/explainer-wasm";
 
 function App() {
   const [show, setShow] = useState(false);
   const toggle = () => setShow(!show);
+
+  document.addEventListener("mouseup", async () => {
+    const selectedText = window.getSelection()?.toString().trim();
+
+    if (!selectedText || selectedText?.length < 1) {
+      return;
+    }
+    if (!/^[a-zA-Z]{2,}$/.test(selectedText)) {
+      return;
+    }
+    console.info(selectedText);
+
+    const r = await explain(selectedText);
+    console.info(r);
+  });
 
   return (
     <div className="popup-container">
