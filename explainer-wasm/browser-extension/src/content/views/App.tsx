@@ -7,7 +7,7 @@ function App() {
   const [show, setShow] = useState(false);
   const toggle = () => setShow(!show);
 
-  document.addEventListener("mouseup", async () => {
+  document.addEventListener("mouseup", () => {
     const word = window.getSelection()?.toString().trim();
 
     if (!word || word?.length < 1) {
