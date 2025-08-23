@@ -8,18 +8,20 @@ function App() {
   const toggle = () => setShow(!show);
 
   document.addEventListener("mouseup", async () => {
-    const selectedText = window.getSelection()?.toString().trim();
+    const word = window.getSelection()?.toString().trim();
 
-    if (!selectedText || selectedText?.length < 1) {
+    if (!word || word?.length < 1) {
       return;
     }
-    if (!/^[a-zA-Z]{2,}$/.test(selectedText)) {
+    if (!/^[a-zA-Z]{2,}$/.test(word)) {
       return;
     }
-    console.info(selectedText);
+    console.info(word);
 
-    chrome.runtime.sendMessage(selectedText, (response) => {
-      console.info(response);
+    chrome.runtime.sendMessage(word, (response) => {
+      const explainer = response as Explainer;
+
+      console.info(explainer.sentences);
     });
   });
 
