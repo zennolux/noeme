@@ -4,7 +4,11 @@ chrome.runtime.onMessage.addListener((word, _sender, sendResponse) => {
   (async () => {
     await init();
 
-    sendResponse(await explain(word));
+    try {
+      sendResponse(await explain(word));
+    } catch (error) {
+      sendResponse(undefined);
+    }
   })();
 
   return true;

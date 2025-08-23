@@ -19,9 +19,9 @@ function App() {
     console.info(word);
 
     chrome.runtime.sendMessage(word, (response) => {
-      const explainer = response as Explainer;
+      const explainer = response as Explainer | undefined;
 
-      console.info(explainer.sentences);
+      console.info(explainer?.sentences);
     });
   });
 
