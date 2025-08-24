@@ -1,40 +1,49 @@
-import Logo from "@/assets/crx.svg";
-import { useState } from "react";
-import "./App.css";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import "@/index.css";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [show, setShow] = useState(false);
-  const toggle = () => setShow(!show);
+  const [explainer, setExplainer] = useState<Explainer | undefined>();
 
-  document.addEventListener("mouseup", () => {
-    const word = window.getSelection()?.toString().trim();
+  useEffect(() => {
+    document.addEventListener("dblclick", (event) => {
+      console.info(event);
 
-    if (!word || word?.length < 1) {
-      return;
-    }
-    if (!/^[a-zA-Z]{2,}$/.test(word)) {
-      return;
-    }
-    console.info(word);
+      const word = window.getSelection()?.toString().trim();
+      const { pageX, pageY } = event;
 
-    chrome.runtime.sendMessage(word, (response) => {
-      const explainer = response as Explainer | undefined;
+      if (!word || word?.length < 1) {
+        return;
+      }
 
-      console.info(explainer?.sentences);
+      if (!/^[a-zA-Z]{2,}$/.test(word)) {
+        return;
+      }
+
+      chrome.runtime.sendMessage(word, (response) => {
+        setExplainer(response as Explainer | undefined);
+
+        console.info("use new", pageX, pageY);
+      });
     });
-  });
+  }, []);
+
+  useEffect(() => {
+    console.info(explainer);
+  }, [explainer]);
 
   return (
-    <div className="popup-container">
-      {show && (
-        <div className={`popup-content ${show ? "opacity-100" : "opacity-0"}`}>
-          <h1 className="text-red-300">HELLO CRXJS</h1>
-        </div>
-      )}
-      <button className="toggle-button" onClick={toggle}>
-        <img src={Logo} alt="CRXJS logo" className="button-icon" />
-      </button>
+    <div className="h-80 w-80 flex justify-center items-center">
+      <Popover>
+        <PopoverTrigger>Open</PopoverTrigger>
+        <PopoverContent className="h-full w-full">
+          Place content for the popover here.
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
