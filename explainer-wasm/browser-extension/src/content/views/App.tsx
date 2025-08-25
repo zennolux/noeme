@@ -4,15 +4,15 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import "@/index.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function App() {
   const [explainer, setExplainer] = useState<Explainer | undefined>();
+  const [mousePosition, setMousePositon] = useState({ pageX: 0, pageY: 0 });
+  const popupTrigger = useRef(null);
 
   useEffect(() => {
     document.addEventListener("dblclick", (event) => {
-      console.info(event);
-
       const word = window.getSelection()?.toString().trim();
       const { pageX, pageY } = event;
 
@@ -24,27 +24,33 @@ function App() {
         return;
       }
 
+      setMousePositon({ pageX, pageY });
+
       chrome.runtime.sendMessage(word, (response) => {
         setExplainer(response as Explainer | undefined);
-
-        console.info("use new", pageX, pageY);
       });
     });
   }, []);
 
   useEffect(() => {
     console.info(explainer);
+    if (explainer) {
+      (popupTrigger.current as any)?.click();
+    }
   }, [explainer]);
 
   return (
-    <div className="h-80 w-80 flex justify-center items-center">
-      <Popover>
-        <PopoverTrigger>Open</PopoverTrigger>
-        <PopoverContent className="h-full w-full">
-          Place content for the popover here.
-        </PopoverContent>
-      </Popover>
-    </div>
+    <Popover>
+      <PopoverTrigger
+        className="btn-trigger fixed w-20 h-0 z-50 opacity-0"
+        style={{
+          top: `${mousePosition.pageY + 10}px`,
+          left: `${mousePosition.pageX - 40}px`,
+        }}
+        ref={popupTrigger}
+      ></PopoverTrigger>
+      <PopoverContent>Place content for the popover here.</PopoverContent>
+    </Popover>
   );
 }
 
