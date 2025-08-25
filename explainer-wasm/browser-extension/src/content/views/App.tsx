@@ -1,20 +1,27 @@
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import "@/index.css";
 import { useEffect, useRef, useState } from "react";
+import parse from "html-react-parser";
 
 function App() {
   const [explainer, setExplainer] = useState<Explainer | undefined>();
-  const [mousePosition, setMousePositon] = useState({ pageX: 0, pageY: 0 });
-  const popupTrigger = useRef(null);
+  const trigger = useRef(null);
 
   useEffect(() => {
-    document.addEventListener("dblclick", (event) => {
+    window.document.documentElement.classList.add("dark");
+
+    document.addEventListener("dblclick", () => {
       const word = window.getSelection()?.toString().trim();
-      const { pageX, pageY } = event;
 
       if (!word || word?.length < 1) {
         return;
@@ -23,8 +30,6 @@ function App() {
       if (!/^[a-zA-Z]{2,}$/.test(word)) {
         return;
       }
-
-      setMousePositon({ pageX, pageY });
 
       chrome.runtime.sendMessage(word, (response) => {
         setExplainer(response as Explainer | undefined);
@@ -35,22 +40,46 @@ function App() {
   useEffect(() => {
     console.info(explainer);
     if (explainer) {
-      (popupTrigger.current as any)?.click();
+      (trigger.current as any)?.click();
     }
   }, [explainer]);
 
   return (
-    <Popover>
-      <PopoverTrigger
-        className="btn-trigger fixed w-20 h-0 z-50 opacity-0"
-        style={{
-          top: `${mousePosition.pageY + 10}px`,
-          left: `${mousePosition.pageX - 40}px`,
-        }}
-        ref={popupTrigger}
-      ></PopoverTrigger>
-      <PopoverContent>Place content for the popover here.</PopoverContent>
-    </Popover>
+    <Sheet>
+      <SheetTrigger asChild ref={trigger}>
+        <button></button>
+      </SheetTrigger>
+      <SheetContent className="font-mono">
+        <SheetHeader>
+          <SheetTitle className="flex justify-center items-center">
+            {explainer?.word}
+          </SheetTitle>
+          <SheetDescription />
+        </SheetHeader>
+        <ScrollArea className="w-[99%] h-full">
+          {explainer?.sentences.map((item, index) => (
+            <div className="mx-2 mt-2 [&:last-child]:mb-20" key={index}>
+              <p className="text-gray-100">
+                {parse(
+                  item.en.replace(
+                    new RegExp(`(${explainer.word})`, "gi"),
+                    `<span className="font-extrabold text-gray-400 underline underline-offset-2">$1</span>`
+                  )
+                )}
+              </p>
+              <p className="text-gray-300">{item.cn}</p>
+              {index < explainer.sentences.length - 1 ? (
+                <Separator />
+              ) : (
+                <p className="w-full h-20"></p>
+              )}
+            </div>
+          ))}
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+        <SheetFooter></SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
 
