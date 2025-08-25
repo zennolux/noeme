@@ -14,7 +14,7 @@ export default defineManifest({
     },
     default_popup: "src/popup/index.html",
   },
-  permissions: ["sidePanel", "contentSettings", "webRequest"],
+  permissions: ["sidePanel", "contentSettings", "webRequest", "storage"],
   content_scripts: [
     {
       js: ["src/content/main.tsx"],

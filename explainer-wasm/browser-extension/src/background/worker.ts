@@ -2,12 +2,22 @@ import init, { explain } from "../../pkg/explainer_wasm.js";
 
 chrome.runtime.onMessage.addListener((word, _sender, sendResponse) => {
   (async () => {
-    await init();
+    const cached = await chrome.storage.local.get(word);
 
-    try {
-      sendResponse(await explain(word));
-    } catch (error) {
-      sendResponse(undefined);
+    if (cached[word]) {
+      sendResponse(cached[word]);
+    } else {
+      await init();
+
+      try {
+        const explainer = await explain(word);
+
+        sendResponse(explainer);
+
+        await chrome.storage.local.set({ [word]: explainer });
+      } catch (error) {
+        sendResponse(undefined);
+      }
     }
   })();
 
