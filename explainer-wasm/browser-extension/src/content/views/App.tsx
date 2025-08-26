@@ -55,12 +55,12 @@ function App() {
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="w-[99%] h-[80%]">
-          <div className="mt-4 mx-2">
+          <div className="mt-2 mx-2">
             <h4 className="text-gray-500">Meanings:</h4>
             {explainer?.meanings.map((item, index) => (
               <div className="mt-2" key={index}>
                 <div className="flex flex-col gap-2">
-                  <label className="text-gray-100 font-extrabold w-10 h-5 bg-gray-800 text-center shadow-background">
+                  <label className="flex justify-center items-center text-gray-100 font-extrabold w-10 h-5 bg-gray-800 shadow-background">
                     {item.attr}
                   </label>
                   <div>
@@ -81,7 +81,7 @@ function App() {
               </div>
             ))}
           </div>
-          <div className="mt-4 mx-2">
+          <div className="mt-2 mx-2">
             <h4 className="text-gray-500">Sample sentences:</h4>
             {explainer?.sentences.map((item, index) => (
               <div className="mt-2" key={index}>
