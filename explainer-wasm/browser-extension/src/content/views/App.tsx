@@ -45,35 +45,67 @@ function App() {
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
       <SheetContent className="h-full font-mono">
-        <SheetHeader className="h-[5%]">
+        <SheetHeader className="h-[10%]">
           <SheetTitle className="flex justify-center items-center">
             {explainer?.word}
           </SheetTitle>
-          <SheetDescription />
+          <SheetDescription className="mt-2 flex justify-center items-center gap-2">
+            <p>{explainer?.pronunciation.phonetic_symbol}</p>
+            <p>喇叭</p>
+          </SheetDescription>
         </SheetHeader>
-        <ScrollArea className="w-[99%] h-[90%]">
-          {explainer?.sentences.map((item, index) => (
-            <div className="mx-2 mt-2 [&:last-child]:mb-20" key={index}>
-              <div className="flex gap-2 items-start">
-                <h4 className="text-gray-500">{index + 1}.</h4>
-                <div>
-                  <p className="text-gray-200">
-                    {parse(
-                      item.en.replace(
-                        new RegExp(`(${explainer.word})`, "gi"),
-                        `<span className="font-extrabold text-gray-100 underline underline-offset-4">$1</span>`
-                      )
-                    )}
-                  </p>
-                  <p className="text-gray-200">{item.cn}</p>
+        <ScrollArea className="w-[99%] h-[80%]">
+          <div className="mt-4 mx-2">
+            <h4 className="text-gray-500">Meanings:</h4>
+            {explainer?.meanings.map((item, index) => (
+              <div className="mt-2" key={index}>
+                <div className="flex flex-col gap-2">
+                  <label className="text-gray-100 font-extrabold w-10 h-5 bg-gray-800 text-center shadow-background">
+                    {item.attr}
+                  </label>
+                  <div>
+                    {item.values.map((value, key) => (
+                      <>
+                        <div className="flex gap-2 mt-2" key={key}>
+                          <h4 className="text-gray-500">{key + 1}.</h4>
+                          <div>
+                            <p className="text-gray-200">{value.en}</p>
+                            <p className="text-gray-200">{value.cn}</p>
+                          </div>
+                        </div>
+                        {key < item.values.length - 1 ? <Separator /> : ""}
+                      </>
+                    ))}
+                  </div>
                 </div>
               </div>
-              {index < explainer.sentences.length - 1 ? <Separator /> : ""}
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="mt-4 mx-2">
+            <h4 className="text-gray-500">Sample sentences:</h4>
+            {explainer?.sentences.map((item, index) => (
+              <div className="mt-2" key={index}>
+                <div className="flex gap-2 items-start">
+                  <h4 className="text-gray-500">{index + 1}.</h4>
+                  <div>
+                    <p className="text-gray-200">
+                      {parse(
+                        item.en.replace(
+                          new RegExp(`(${explainer.word})`, "gi"),
+                          `<span className="font-extrabold text-gray-100 underline underline-offset-4">$1</span>`
+                        )
+                      )}
+                    </p>
+                    <p className="text-gray-200">{item.cn}</p>
+                  </div>
+                </div>
+                {index < explainer.sentences.length - 1 ? <Separator /> : ""}
+              </div>
+            ))}
+          </div>
           <ScrollBar orientation="vertical" />
         </ScrollArea>
-        <SheetFooter className="h-[5%] w-full"></SheetFooter>
+        <SheetFooter className="h-[10%] w-full"></SheetFooter>
       </SheetContent>
     </Sheet>
   );
