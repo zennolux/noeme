@@ -6,16 +6,14 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import "@/index.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 
 function App() {
   const [explainer, setExplainer] = useState<Explainer | undefined>();
-  const trigger = useRef(null);
+  const [openSheet, setOpenSheet] = useState(false);
 
   useEffect(() => {
     window.document.documentElement.classList.add("dark");
@@ -40,44 +38,42 @@ function App() {
   useEffect(() => {
     console.info(explainer);
     if (explainer) {
-      (trigger.current as any)?.click();
+      setOpenSheet(true);
     }
   }, [explainer]);
 
   return (
-    <Sheet>
-      <SheetTrigger asChild ref={trigger}>
-        <button></button>
-      </SheetTrigger>
-      <SheetContent className="font-mono">
-        <SheetHeader>
+    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
+      <SheetContent className="h-full font-mono">
+        <SheetHeader className="h-[5%]">
           <SheetTitle className="flex justify-center items-center">
             {explainer?.word}
           </SheetTitle>
           <SheetDescription />
         </SheetHeader>
-        <ScrollArea className="w-[99%] h-full">
+        <ScrollArea className="w-[99%] h-[90%]">
           {explainer?.sentences.map((item, index) => (
             <div className="mx-2 mt-2 [&:last-child]:mb-20" key={index}>
-              <p className="text-gray-100">
-                {parse(
-                  item.en.replace(
-                    new RegExp(`(${explainer.word})`, "gi"),
-                    `<span className="font-extrabold text-gray-400 underline underline-offset-2">$1</span>`
-                  )
-                )}
-              </p>
-              <p className="text-gray-300">{item.cn}</p>
-              {index < explainer.sentences.length - 1 ? (
-                <Separator />
-              ) : (
-                <p className="w-full h-20"></p>
-              )}
+              <div className="flex gap-2 items-start">
+                <h4 className="text-gray-500">{index + 1}.</h4>
+                <div>
+                  <p className="text-gray-200">
+                    {parse(
+                      item.en.replace(
+                        new RegExp(`(${explainer.word})`, "gi"),
+                        `<span className="font-extrabold text-gray-100 underline underline-offset-4">$1</span>`
+                      )
+                    )}
+                  </p>
+                  <p className="text-gray-200">{item.cn}</p>
+                </div>
+              </div>
+              {index < explainer.sentences.length - 1 ? <Separator /> : ""}
             </div>
           ))}
           <ScrollBar orientation="vertical" />
         </ScrollArea>
-        <SheetFooter></SheetFooter>
+        <SheetFooter className="h-[5%] w-full"></SheetFooter>
       </SheetContent>
     </Sheet>
   );
