@@ -44,7 +44,7 @@ function App() {
 
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-      <SheetContent className="h-full font-mono">
+      <SheetContent className="h-full font-mono z-50">
         <SheetHeader className="h-[10%]">
           <SheetTitle className="flex justify-center items-center">
             {explainer?.word}
