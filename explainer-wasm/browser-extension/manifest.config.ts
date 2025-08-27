@@ -30,9 +30,9 @@ export default defineManifest({
   },
   content_security_policy: {
     extension_pages:
-      "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://then.dpdns.org;",
+      "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://then.dpdns.org; media-src 'self' https://bing.com https://*.bing.com;",
   },
-  host_permissions: ["https://then.dpdns.org/*"],
+  host_permissions: ["https://then.dpdns.org/*", "https://bing.com/*"],
   web_accessible_resources: [
     {
       resources: ["assets/*.wasm", "assets/*.js", "assets/*.css"],

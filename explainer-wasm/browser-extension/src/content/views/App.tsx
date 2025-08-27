@@ -10,10 +10,18 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import parse from "html-react-parser";
+import { IoVolumeMediumOutline as Volume } from "react-icons/io5";
+import { Howl } from "howler";
 
 function App() {
   const [explainer, setExplainer] = useState<Explainer | undefined>();
   const [openSheet, setOpenSheet] = useState(false);
+
+  const playAudio = (url: string) => {
+    console.info(url);
+    const audio = new Howl({ src: [url], html5: true });
+    audio.play();
+  };
 
   useEffect(() => {
     window.document.documentElement.classList.add("dark");
@@ -51,7 +59,12 @@ function App() {
           </SheetTitle>
           <SheetDescription className="mt-2 flex justify-center items-center gap-2">
             <p>{explainer?.pronunciation.phonetic_symbol}</p>
-            <p>喇叭</p>
+            <p>
+              <Volume
+                className="text-2xl text-gray-200"
+                onClick={() => playAudio(explainer?.pronunciation.audio_url!)}
+              />
+            </p>
           </SheetDescription>
         </SheetHeader>
         <ScrollArea className="w-[99%] h-[80%]">
@@ -60,9 +73,9 @@ function App() {
             {explainer?.meanings.map((item, index) => (
               <div className="mt-2" key={index}>
                 <div className="flex flex-col gap-2">
-                  <label className="flex justify-center items-center text-gray-100 font-extrabold w-10 h-5 bg-gray-800 shadow-background">
+                  <h4 className="flex justify-center items-center text-gray-100 font-extrabold w-10 h-5 bg-gray-800 shadow-background">
                     {item.attr}
-                  </label>
+                  </h4>
                   <div>
                     {item.values.map((value, key) => (
                       <>
