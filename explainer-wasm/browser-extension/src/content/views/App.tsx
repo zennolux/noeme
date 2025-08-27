@@ -53,21 +53,21 @@ function App() {
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
       <SheetContent className="h-full font-mono z-50">
-        <SheetHeader className="h-[10%]">
+        <SheetHeader className="h-[12%]">
           <SheetTitle className="flex justify-center items-center">
             {explainer?.word}
           </SheetTitle>
           <SheetDescription className="mt-2 flex justify-center items-center gap-2">
-            <p>{explainer?.pronunciation.phonetic_symbol}</p>
+            <p>[{explainer?.pronunciation.phonetic_symbol}]</p>
             <p>
               <Volume
-                className="text-2xl text-gray-200"
+                className="text-2xl"
                 onClick={() => playAudio(explainer?.pronunciation.audio_url!)}
               />
             </p>
           </SheetDescription>
         </SheetHeader>
-        <ScrollArea className="w-[99%] h-[80%]">
+        <ScrollArea className="w-[99%] h-[78%]">
           <div className="mt-2 mx-2">
             <h4 className="text-gray-500">Meanings:</h4>
             {explainer?.meanings.map((item, index) => (
