@@ -89,7 +89,7 @@ struct Source {
 }
 
 impl Source {
-    const DOMAIN: &str = "https://bing.com";
+    const DOMAIN: &str = "https://cn.bing.com";
 
     async fn load(word: &str) -> Result<Self> {
         let url = format!("{}/dict/search?q={}", Self::DOMAIN, word);
