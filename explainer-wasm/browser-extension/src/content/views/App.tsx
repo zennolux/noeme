@@ -11,16 +11,17 @@ import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import { IoVolumeMediumOutline as Volume } from "react-icons/io5";
-import { Howl } from "howler";
 
 function App() {
   const [explainer, setExplainer] = useState<Explainer | undefined>();
   const [openSheet, setOpenSheet] = useState(false);
 
   const playAudio = (url: string) => {
-    console.info(url);
-    const audio = new Howl({ src: [url], html5: true });
-    audio.play();
+    chrome.runtime.sendMessage({
+      type: "PLAY_AUDIO",
+      target: "background",
+      data: { url },
+    });
   };
 
   useEffect(() => {
@@ -37,9 +38,12 @@ function App() {
         return;
       }
 
-      chrome.runtime.sendMessage(word, (response) => {
-        setExplainer(response as Explainer | undefined);
-      });
+      chrome.runtime.sendMessage(
+        { type: "FETCH_EXPLAINED_DATA", target: "background", data: { word } },
+        (response) => {
+          setExplainer(response as Explainer | undefined);
+        }
+      );
     });
   }, []);
 
@@ -61,7 +65,7 @@ function App() {
             <p>[{explainer?.pronunciation.phonetic_symbol}]</p>
             <p>
               <Volume
-                className="text-2xl"
+                className="text-2xl hover:text-gray-300"
                 onClick={() => playAudio(explainer?.pronunciation.audio_url!)}
               />
             </p>
@@ -82,11 +86,11 @@ function App() {
                         <div className="flex gap-2 mt-2" key={key}>
                           <h4 className="text-gray-500">{key + 1}.</h4>
                           <div>
-                            <p className="text-gray-200">{value.en}</p>
-                            <p className="text-gray-200">{value.cn}</p>
+                            <p className="text-gray-300">{value.en}</p>
+                            <p className="text-gray-300">{value.cn}</p>
                           </div>
                         </div>
-                        {key < item.values.length - 1 ? <Separator /> : ""}
+                        {key < item.values.length - 1 && <Separator />}
                       </>
                     ))}
                   </div>
@@ -99,9 +103,17 @@ function App() {
             {explainer?.sentences.map((item, index) => (
               <div className="mt-2" key={index}>
                 <div className="flex gap-2 items-start">
-                  <h4 className="text-gray-500">{index + 1}.</h4>
+                  <div className="flex gap-1">
+                    <h4 className="text-gray-500">{index + 1}.</h4>
+                    <p>
+                      <Volume
+                        className="text-2xl text-gray-400 hover:text-gray-300"
+                        onClick={() => playAudio(item.audio_url)}
+                      />
+                    </p>
+                  </div>
                   <div>
-                    <p className="text-gray-200">
+                    <p className="text-gray-300">
                       {parse(
                         item.en.replace(
                           new RegExp(`(${explainer.word})`, "gi"),
@@ -109,10 +121,10 @@ function App() {
                         )
                       )}
                     </p>
-                    <p className="text-gray-200">{item.cn}</p>
+                    <p className="text-gray-300">{item.cn}</p>
                   </div>
                 </div>
-                {index < explainer.sentences.length - 1 ? <Separator /> : ""}
+                {index < explainer.sentences.length - 1 && <Separator />}
               </div>
             ))}
           </div>

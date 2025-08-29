@@ -1,27 +1,66 @@
+import { closeDocument, createDocument } from "@/lib/offscreen";
 import init, { explain } from "../../pkg/explainer_wasm.js";
 
-//https://chat.deepseek.com/a/chat/s/355dc451-564f-4eea-a11c-69b37d3ca603
-
-chrome.runtime.onMessage.addListener((word, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   (async () => {
-    const cached = await chrome.storage.local.get(word);
+    const { type, target, data } = message;
 
-    if (cached[word]) {
-      sendResponse(cached[word]);
-    } else {
-      await init();
+    if (target != "background") {
+      return;
+    }
 
-      try {
-        const explainer = await explain(word);
-
-        sendResponse(explainer);
-
-        await chrome.storage.local.set({ [word]: explainer });
-      } catch (error) {
-        sendResponse(undefined);
-      }
+    switch (type) {
+      case "FETCH_EXPLAINED_DATA":
+        await fetchExplainedData(data.word, sendResponse);
+        break;
+      case "PLAY_AUDIO":
+        await playAudio(data.url, sendResponse);
+        break;
+      case "AUDIO_COMPLETED_TO_PLAY":
+        await closeDocument();
+        break;
+      default:
+        throw new Error(`Unexpected message type: ${type}`);
     }
   })();
 
   return true;
 });
+
+async function fetchExplainedData(
+  word: string,
+  sendResponse: CallableFunction
+) {
+  const cached = await chrome.storage.local.get(word);
+
+  if (cached[word]) {
+    sendResponse(cached[word]);
+  } else {
+    try {
+      await init();
+
+      const explainer = await explain(word);
+
+      sendResponse(explainer);
+      await chrome.storage.local.set({ [word]: explainer });
+    } catch (error) {
+      sendResponse(undefined);
+    }
+  }
+}
+
+async function playAudio(url: string, sendResponse: CallableFunction) {
+  await createDocument();
+
+  chrome.runtime
+    .sendMessage({
+      type: "PLAY_AUDIO",
+      target: "offscreen",
+      data: { url },
+    })
+    .catch((error) => {
+      throw new Error(error);
+    });
+
+  sendResponse(true);
+}
