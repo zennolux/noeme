@@ -22,18 +22,18 @@ impl Jsonify for Pronunciation {
 }
 
 #[derive(Debug, Serialize)]
-struct MeaningValue {
+struct AdvancedMeaningValue {
     cn: String,
     en: String,
 }
 
 #[derive(Debug, Serialize)]
-pub struct MeaningItem {
+pub struct AdvancedMeaningItem {
     attr: String,
-    values: Vec<MeaningValue>,
+    values: Vec<AdvancedMeaningValue>,
 }
 
-impl Jsonify for Vec<MeaningItem> {
+impl Jsonify for Vec<AdvancedMeaningItem> {
     fn to_json(&self) -> Result<String> {
         let serialized = serde_json::to_string(&self)?;
 
@@ -60,7 +60,7 @@ impl Jsonify for Vec<SentenceItem> {
 pub struct Explainer {
     pub word: String,
     pub pronunciation: Pronunciation,
-    pub meanings: Vec<MeaningItem>,
+    pub advanced_meanings: Vec<AdvancedMeaningItem>,
     pub sentences: Vec<SentenceItem>,
 }
 
@@ -76,11 +76,11 @@ struct Source {
     document: Html,
     pronunciation_selector: Selector,
     audio_selector: Selector,
-    meanings_selector: Selector,
-    meaning_attr_selector: Selector,
-    meaning_items_selector: Selector,
-    meaning_item_cn_selector: Selector,
-    meaning_item_en_selector: Selector,
+    advanced_meanings_selector: Selector,
+    advanced_meaning_attr_selector: Selector,
+    advanced_meaning_items_selector: Selector,
+    advanced_meaning_item_cn_selector: Selector,
+    advanced_meaning_item_en_selector: Selector,
     sentence_items_selector: Selector,
     sentence_item_en_selector: Selector,
     sentence_item_cn_selector: Selector,
@@ -105,11 +105,11 @@ impl Source {
             document: Html::parse_document(html.as_str()),
             pronunciation_selector: Self::parse_selector(".hd_prUS")?,
             audio_selector: Self::parse_selector("#bigaud_us")?,
-            meanings_selector: Self::parse_selector("#newLeId .each_seg")?,
-            meaning_attr_selector: Self::parse_selector(".pos_lin .pos")?,
-            meaning_items_selector: Self::parse_selector(".def_pa")?,
-            meaning_item_cn_selector: Self::parse_selector(".bil, .b_primtxt")?,
-            meaning_item_en_selector: Self::parse_selector(".val, .b_regtxt")?,
+            advanced_meanings_selector: Self::parse_selector("#newLeId .each_seg")?,
+            advanced_meaning_attr_selector: Self::parse_selector(".pos_lin .pos")?,
+            advanced_meaning_items_selector: Self::parse_selector(".def_pa")?,
+            advanced_meaning_item_cn_selector: Self::parse_selector(".bil, .b_primtxt")?,
+            advanced_meaning_item_en_selector: Self::parse_selector(".val, .b_regtxt")?,
             sentence_items_selector: Self::parse_selector(".se_li1")?,
             sentence_item_en_selector: Self::parse_selector(".sen_en")?,
             sentence_item_cn_selector: Self::parse_selector(".sen_cn")?,
@@ -155,27 +155,38 @@ impl Source {
         })
     }
 
-    fn find_meanings(&self) -> Option<Vec<MeaningItem>> {
-        self.document.select(&self.meanings_selector).fold(
+    //fn find_basic_meanings(&self) -> Vec {}
+
+    fn find_meanings(&self) -> Option<Vec<AdvancedMeaningItem>> {
+        self.document.select(&self.advanced_meanings_selector).fold(
             Some(vec![]),
             |mut meaning_item, parent_element| {
                 let attr = self
-                    .get_text(parent_element, &self.meaning_attr_selector)?
+                    .get_text(parent_element, &self.advanced_meaning_attr_selector)?
                     .replace(".", "");
 
-                let values: Vec<MeaningValue> =
-                    parent_element.select(&self.meaning_items_selector).fold(
+                let values: Vec<AdvancedMeaningValue> = parent_element
+                    .select(&self.advanced_meaning_items_selector)
+                    .fold(
                         Some(vec![]),
-                        |mut meaning_values, child_element| -> Option<Vec<MeaningValue>> {
-                            meaning_values.as_mut()?.push(MeaningValue {
-                                cn: self.get_text(child_element, &self.meaning_item_cn_selector)?,
-                                en: self.get_text(child_element, &self.meaning_item_en_selector)?,
+                        |mut meaning_values, child_element| -> Option<Vec<AdvancedMeaningValue>> {
+                            meaning_values.as_mut()?.push(AdvancedMeaningValue {
+                                cn: self.get_text(
+                                    child_element,
+                                    &self.advanced_meaning_item_cn_selector,
+                                )?,
+                                en: self.get_text(
+                                    child_element,
+                                    &self.advanced_meaning_item_en_selector,
+                                )?,
                             });
                             meaning_values
                         },
                     )?;
 
-                meaning_item.as_mut()?.push(MeaningItem { attr, values });
+                meaning_item
+                    .as_mut()?
+                    .push(AdvancedMeaningItem { attr, values });
 
                 meaning_item
             },
@@ -255,43 +266,11 @@ impl Explainer {
             return Err(anyhow!("No results found for {:?}.", word));
         }
 
-        let pronunciation = match source.find_pronunciation() {
-            Some(pronunciation) => pronunciation,
-            None => Pronunciation {
-                phonetic_symbol: String::from(""),
-                audio_url: String::from(""),
-            },
-        };
-
-        let meanings = match source.find_meanings() {
-            Some(meanings) => meanings,
-            None => {
-                vec![MeaningItem {
-                    attr: String::from(""),
-                    values: vec![MeaningValue {
-                        cn: String::from(""),
-                        en: String::from(""),
-                    }],
-                }]
-            }
-        };
-
-        let sentences = match source.find_sentences() {
-            Some(stetences) => stetences,
-            None => {
-                vec![SentenceItem {
-                    en: String::from(""),
-                    cn: String::from(""),
-                    audio_url: String::from(""),
-                }]
-            }
-        };
-
         Ok(Self {
             word: word.to_string(),
-            pronunciation,
-            meanings,
-            sentences,
+            pronunciation: source.find_pronunciation().unwrap(),
+            advanced_meanings: source.find_meanings().unwrap(),
+            sentences: source.find_sentences().unwrap(),
         })
     }
 }
