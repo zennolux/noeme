@@ -22,6 +22,20 @@ impl Jsonify for Pronunciation {
 }
 
 #[derive(Debug, Serialize)]
+pub struct BasicMeaningItem {
+    attr: String,
+    value: String,
+}
+
+impl Jsonify for Vec<BasicMeaningItem> {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
+#[derive(Debug, Serialize)]
 struct AdvancedMeaningValue {
     cn: String,
     en: String,
@@ -60,6 +74,7 @@ impl Jsonify for Vec<SentenceItem> {
 pub struct Explainer {
     pub word: String,
     pub pronunciation: Pronunciation,
+    pub basic_meanings: Vec<BasicMeaningItem>,
     pub advanced_meanings: Vec<AdvancedMeaningItem>,
     pub sentences: Vec<SentenceItem>,
 }
@@ -76,6 +91,9 @@ struct Source {
     document: Html,
     pronunciation_selector: Selector,
     audio_selector: Selector,
+    basic_meanings_selector: Selector,
+    basic_meaning_attr_selector: Selector,
+    basic_meaning_value_selector: Selector,
     advanced_meanings_selector: Selector,
     advanced_meaning_attr_selector: Selector,
     advanced_meaning_items_selector: Selector,
@@ -106,6 +124,9 @@ impl Source {
             pronunciation_selector: Self::parse_selector(".hd_prUS")?,
             audio_selector: Self::parse_selector("#bigaud_us")?,
             advanced_meanings_selector: Self::parse_selector("#newLeId .each_seg")?,
+            basic_meanings_selector: Self::parse_selector(".qdef ul li")?,
+            basic_meaning_attr_selector: Self::parse_selector(".pos:not(.web)")?,
+            basic_meaning_value_selector: Self::parse_selector(".def,b_regtxt")?,
             advanced_meaning_attr_selector: Self::parse_selector(".pos_lin .pos")?,
             advanced_meaning_items_selector: Self::parse_selector(".def_pa")?,
             advanced_meaning_item_cn_selector: Self::parse_selector(".bil, .b_primtxt")?,
@@ -155,9 +176,23 @@ impl Source {
         })
     }
 
-    //fn find_basic_meanings(&self) -> Vec {}
+    fn find_basic_meanings(&self) -> Option<Vec<BasicMeaningItem>> {
+        self.document.select(&self.basic_meanings_selector).fold(
+            Some(vec![]),
+            |mut items: Option<Vec<BasicMeaningItem>>, element| {
+                if let Some(attr) = self.get_text(element, &self.basic_meaning_attr_selector) {
+                    let value = self.get_text(element, &self.basic_meaning_value_selector)?;
 
-    fn find_meanings(&self) -> Option<Vec<AdvancedMeaningItem>> {
+                    items.as_mut()?.push(BasicMeaningItem { attr, value });
+                    items
+                } else {
+                    items
+                }
+            },
+        )
+    }
+
+    fn find_advanced_meanings(&self) -> Option<Vec<AdvancedMeaningItem>> {
         self.document.select(&self.advanced_meanings_selector).fold(
             Some(vec![]),
             |mut meaning_item, parent_element| {
@@ -269,7 +304,8 @@ impl Explainer {
         Ok(Self {
             word: word.to_string(),
             pronunciation: source.find_pronunciation().unwrap(),
-            advanced_meanings: source.find_meanings().unwrap(),
+            basic_meanings: source.find_basic_meanings().unwrap(),
+            advanced_meanings: source.find_advanced_meanings().unwrap(),
             sentences: source.find_sentences().unwrap(),
         })
     }

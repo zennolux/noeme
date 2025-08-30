@@ -8,9 +8,10 @@ use explainer::{Explainer, Jsonify};
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
-    let json_str = Explainer::from(cli.word.as_str()).await?.to_json()?;
+    let explainer = Explainer::from(cli.word.as_str()).await?;
 
-    println!("{:?}", json_str);
+    println!("{:#?}", explainer.basic_meanings);
+    println!("{:#?}", explainer.basic_meanings.to_json());
 
     Ok(())
 }
