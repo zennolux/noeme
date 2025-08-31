@@ -1,7 +1,8 @@
 interface Explainer {
   word: string;
   pronunciation: Pronunciation;
-  meanings: Array<MeaningItem>;
+  basic_meanings: Array<BasicMeaningItem>;
+  advanced_meanings: Array<AdvancedMeaningItem>;
   sentences: Array<SentenceItem>;
 }
 
@@ -10,14 +11,19 @@ interface Pronunciation {
   audio_url: string;
 }
 
-interface MeaningValue {
+interface BasicMeaningItem {
+  attr: string;
+  value: string;
+}
+
+interface AdvancedMangingValue {
   cn: string;
   en: string;
 }
 
-interface MeaningItem {
+interface AdvancedMeaningItem {
   attr: string;
-  values: Array<MeaningValue>;
+  values: Array<AdvancedMangingValue>;
 }
 
 interface SentenceItem {
