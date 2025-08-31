@@ -190,10 +190,7 @@ impl Source {
         self.document.select(&self.advanced_meanings_selector).fold(
             Some(vec![]),
             |mut meaning_item, parent_element| {
-                let attr = self
-                    .get_text(parent_element, &self.advanced_meaning_attr_selector)?
-                    .replace(".", "");
-
+                let attr = self.get_text(parent_element, &self.advanced_meaning_attr_selector)?;
                 let values: Vec<AdvancedMeaningValue> = parent_element
                     .select(&self.advanced_meaning_items_selector)
                     .fold(
