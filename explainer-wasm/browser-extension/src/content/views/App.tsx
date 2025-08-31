@@ -73,7 +73,7 @@ function App() {
         </SheetHeader>
         <ScrollArea className="w-[99%] h-[78%]">
           <div className="mt-2 mx-2">
-            <h4 className="text-gray-500">Basic Meanings:</h4>
+            <h4 className="text-gray-200">Basic Meanings:</h4>
             {explainer?.basic_meanings.map((item) => (
               <div className="mt-2 flex gap-2">
                 <h4 className="flex justify-center items-center text-gray-100 font-extrabold w-15 h-5 bg-gray-800 shadow-background">
@@ -85,11 +85,11 @@ function App() {
           </div>
           {explainer?.advanced_meanings.length! > 0 && (
             <div className="mt-2 mx-2">
-              <h4 className="text-gray-500">Advanced Meanings:</h4>
+              <h4 className="text-gray-200">Advanced Meanings:</h4>
               {explainer?.advanced_meanings.map((item, index) => (
                 <div className="mt-2" key={index}>
                   <div className="flex flex-col gap-2">
-                    <h4 className="flex justify-center items-center text-gray-100 font-extrabold w-10 h-5 bg-gray-800 shadow-background">
+                    <h4 className="flex justify-center items-center text-gray-100 font-extrabold w-15 h-5 bg-gray-800 shadow-background">
                       {item.attr}
                     </h4>
                     <div>
@@ -113,7 +113,7 @@ function App() {
           )}
           {explainer?.sentences.length! > 0 && (
             <div className="mt-2 mx-2">
-              <h4 className="text-gray-500">Sample Sentences:</h4>
+              <h4 className="text-gray-200">Sample Sentences:</h4>
               {explainer?.sentences.map((item, index) => (
                 <div className="mt-2" key={index}>
                   <div className="flex gap-2 items-start">
