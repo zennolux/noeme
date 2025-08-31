@@ -76,7 +76,7 @@ function App() {
             <h4 className="text-gray-500">Basic Meanings:</h4>
             {explainer?.basic_meanings.map((item) => (
               <div className="mt-2 flex gap-2">
-                <h4 className="flex justify-center items-center text-gray-100 font-extrabold w-10 h-5 bg-gray-800 shadow-background">
+                <h4 className="flex justify-center items-center text-gray-100 font-extrabold w-15 h-5 bg-gray-800 shadow-background">
                   {item.attr}
                 </h4>
                 <p className="text-gray-300">{item.value}</p>
