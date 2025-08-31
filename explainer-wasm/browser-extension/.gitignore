@@ -12,6 +12,7 @@ dist
 release
 dist-ssr
 *.local
+pkg
 
 # Editor directories and files
 .vscode/*
