@@ -1,4 +1,10 @@
-chrome.runtime.onMessage.addListener((message) => {
+type Message = {
+  type: string;
+  target: string;
+  data: { [key: string]: string };
+};
+
+chrome.runtime.onMessage.addListener((message: Message) => {
   if (message.target !== "offscreen") {
     return false;
   }
