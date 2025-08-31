@@ -8,12 +8,12 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub async fn explain(word: &str) -> JsValue {
-    let result = Explainer::from(word)
-        .await
-        .expect("Unable to load explainer")
-        .to_json()
-        .expect("Unable to serialize to json");
-
-    parse(result.as_str())
+pub async fn explain(word: &str) -> Result<JsValue, JsValue> {
+    match Explainer::from(word).await {
+        Ok(explainer) => match explainer.to_json() {
+            Ok(result) => Ok(parse(result.as_str())),
+            Err(err) => Err(JsValue::from_str(&err.to_string())),
+        },
+        Err(err) => Err(JsValue::from_str(&err.to_string())),
+    }
 }
