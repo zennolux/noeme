@@ -7,7 +7,7 @@
 
 #### Why explainer?
 
-* It's versatile and can be used in many ways: as a Rust crate or npm package for developers, or as a browser extension, CLI tool, or desktop application for end-users.
+* It's versatile and can be used in many ways: as a Rust crate or npm package for developers, as a CLI tool, or desktop application for end-users.
 
 * It's 100% free. No payments, no subscriptions, and no API token required.
 
@@ -25,14 +25,10 @@ See: [https://www.npmjs.com/package/@zennolux/explainer-wasm?activeTab=readme](h
 
 #### For end-users
 
-> ##### Using as a browser extension
-
-Working in progress!
-
 > ##### Using as a CLI tool 
 
-Working in progress!
+> Working in progress!
 
 > ##### Using as a desktop applicaion 
 
-Working in progress!
+> Working in progress!
