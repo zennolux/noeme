@@ -1,0 +1,19 @@
+{
+  "name": "@zennolux/explainer-wasm",
+  "type": "module",
+  "version": "0.2.1",
+  "files": [
+    "./pkg/explainer_wasm_bg.wasm",
+    "./pkg/explainer_wasm.js",
+    "./pkg/explainer_wasm.d.ts",
+    "./explainer.d.ts"
+  ],
+  "main": "./pkg/explainer_wasm.js",
+  "types": [
+    "./pkg/explainer_wasm.d.ts",
+    "./explainer.d.ts"
+  ],
+  "sideEffects": [
+    "./pkg/snippets/*"
+  ]
+}
