@@ -16,6 +16,33 @@ function App() {
   const [explainer, setExplainer] = useState<Explainer | undefined>();
   const [openSheet, setOpenSheet] = useState(false);
 
+  /*
+  chrome.tabs.onUpdated.addListener((info) => {
+    console.info(info);
+
+    const theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+
+    console.info(theme);
+  });
+
+  /*
+	// In your content script
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches 
+    ? 'dark' 
+    : 'light';
+}
+
+// Listen for theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  const newTheme = e.matches ? 'dark' : 'light';
+  console.log('Theme changed to:', newTheme);
+});
+
+	*/
+
   const playAudio = (url: string) => {
     chrome.runtime.sendMessage({
       type: "PLAY_AUDIO",
