@@ -1,5 +1,5 @@
+import init, { explain } from "@zennolux/explainer-wasm";
 import { closeDocument, createDocument } from "@/lib/offscreen";
-import init, { explain } from "../../pkg/explainer_wasm.js";
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo) => {
   if (!changeInfo.url || changeInfo.url.startsWith("chrome://")) {
