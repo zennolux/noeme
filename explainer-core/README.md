@@ -20,8 +20,11 @@ async fn main() -> Result<()> {
     //or just serialize the pronunciation field to json
     let pronunciation = explainer.pronunciation.to_json()?;
 
-    //or just serialize the meanings field to json
-    let meanings = explainer.meanings.to_json()?;
+    //or just serialize the basic_meanings field to json
+    let basic_meanings = explainer.basic_meanings.to_json()?;
+
+    //or just serialize the advanced_meanings field to json
+    let advanced_meanings = explainer.advanced_meanings.to_json()?;
 
     //or just serialize the sentences field to json
     let sentences = explainer.sentences.to_json()?;
