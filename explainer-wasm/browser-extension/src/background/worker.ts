@@ -1,4 +1,4 @@
-import init, { explain } from "@zennolux/explainer-wasm";
+import init, { explain, type Explainer } from "@zennolux/explainer-wasm";
 import { closeDocument, createDocument } from "@/lib/offscreen";
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo) => {
@@ -36,7 +36,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 async function fetchExplainedData(
   word: string,
-  sendResponse: CallableFunction
+  sendResponse: (response: Explainer | undefined) => void
 ) {
   const cached = await chrome.storage.local.get(word);
 

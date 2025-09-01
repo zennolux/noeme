@@ -1,7 +1,7 @@
 {
   "name": "@zennolux/explainer-wasm",
   "type": "module",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "files": [
     "./pkg/explainer_wasm_bg.wasm",
     "./pkg/explainer_wasm.js",

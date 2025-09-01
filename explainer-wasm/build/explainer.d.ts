@@ -36,6 +36,6 @@ interface SentenceItem {
 
 declare function explain(word: string): Promise<Explainer>;
 
-export { explain };
+export { explain, Explainer };
 
 export default function init(): ReturnType<typeof __wbg_init>;

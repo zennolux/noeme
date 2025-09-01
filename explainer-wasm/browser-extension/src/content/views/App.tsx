@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import { IoVolumeMediumOutline as Volume } from "react-icons/io5";
+import { type Explainer } from "@zennolux/explainer-wasm";
 
 function App() {
   const [explainer, setExplainer] = useState<Explainer | undefined>();
@@ -67,8 +68,8 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
 
       chrome.runtime.sendMessage(
         { type: "FETCH_EXPLAINED_DATA", target: "background", data: { word } },
-        (response) => {
-          setExplainer(response as Explainer | undefined);
+        (response: Explainer | undefined) => {
+          setExplainer(response);
         }
       );
     });
