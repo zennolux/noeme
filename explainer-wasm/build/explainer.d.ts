@@ -1,4 +1,6 @@
-export interface Explainer {
+import __wbg_init from "./pkg/explainer_wasm";
+
+interface Explainer {
   word: string;
   pronunciation: Pronunciation;
   basic_meanings: Array<BasicMeaningItem>;
@@ -31,3 +33,9 @@ interface SentenceItem {
   cn: string;
   audio_url: string;
 }
+
+declare function explain(word: string): Promise<Explainer>;
+
+export { explain };
+
+export default function init(): ReturnType<typeof __wbg_init>;
