@@ -27,8 +27,6 @@ function App() {
     document.addEventListener("dblclick", () => {
       const word = window.getSelection()?.toString().trim();
 
-      console.info(word);
-
       if (!word || word?.length < 1) {
         return;
       }

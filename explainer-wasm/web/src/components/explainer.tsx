@@ -152,6 +152,8 @@ export function AttrTag({ value }: { value: string }) {
   return (
     <p
       style={{
+        margin: 0,
+        padding: 0,
         fontWeight: "bold",
         background: "#99a1af",
         width: "64px",
@@ -173,7 +175,11 @@ export function Paragraph({
 }: PropsWithChildren<{
   style?: CSSProperties;
 }>) {
-  return <p style={{ lineHeight: 1.6, ...style }}>{children}</p>;
+  return (
+    <p style={{ margin: 0, padding: 0, lineHeight: 1.6, ...style }}>
+      {children}
+    </p>
+  );
 }
 
 export function Footer() {
