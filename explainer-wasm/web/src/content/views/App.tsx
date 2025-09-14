@@ -174,10 +174,9 @@ function App() {
                   display: "flex",
                   alignItems: "start",
                   gap: "var(--item-space)",
-                  backgroundColor:
-                    audioPlaying && audioPlaying[item.audio_url]
-                      ? "var(--highlight-bg)"
-                      : "",
+                  ...(audioPlaying && audioPlaying[item.audio_url]
+                    ? { backgroundColor: "var(--highlight-bg)", opacity: 0.7 }
+                    : {}),
                 }}
               >
                 <div
