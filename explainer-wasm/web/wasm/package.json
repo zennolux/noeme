@@ -1,0 +1,16 @@
+{
+  "name": "explainer-wasm",
+  "type": "module",
+  "version": "0.3.1",
+  "files": [
+    "./pkg/explainer_wasm_bg.wasm",
+    "./pkg/explainer_wasm.js",
+    "./pkg/explainer_wasm.d.ts",
+    "./explainer.d.ts"
+  ],
+  "main": "./pkg/explainer_wasm.js",
+  "types": "./explainer.d.ts",
+  "sideEffects": [
+    "./pkg/snippets/*"
+  ]
+}
