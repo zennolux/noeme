@@ -210,9 +210,11 @@ impl Source {
                         },
                     )?;
 
-                meaning_item
-                    .as_mut()?
-                    .push(AdvancedMeaningItem { attr, values });
+                if values.len() > 0 {
+                    meaning_item
+                        .as_mut()?
+                        .push(AdvancedMeaningItem { attr, values });
+                }
 
                 meaning_item
             },

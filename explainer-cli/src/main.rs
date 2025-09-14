@@ -10,8 +10,8 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
     let explainer = Explainer::from(cli.word.as_str()).await?;
 
-    println!("{:#?}", explainer.basic_meanings);
-    println!("{:#?}", explainer.basic_meanings.to_json());
+    println!("Instance: {:#?}", explainer);
+    println!("Jsonify: {:#?}", explainer.to_json());
 
     Ok(())
 }
