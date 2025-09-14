@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import parse from "html-react-parser";
-import { type Explainer } from "@zennolux/explainer-wasm";
+import { type Explainer } from "../../../wasm";
 import {
   AttrTag,
   AudioPlayer,
