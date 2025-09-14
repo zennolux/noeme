@@ -2,12 +2,12 @@
 
 #### For development
 
-> ##### Using as a Rust crate
+> ##### As a Rust crate
 
 See: [https://crates.io/crates/explainer](https://crates.io/crates/explainer)
 
 #### Builtin applications
 
-> ##### Using as a Chrome extension
+> ##### As a Chrome extension
 
 > Working in progress!
