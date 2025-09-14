@@ -143,10 +143,10 @@ function App() {
                       gap: "var(--item-space)",
                     }}
                   >
-                    <Paragraph style={{ fontWeight: "bold" }}>
+                    <Paragraph style={{ fontWeight: "bold", width: "auto" }}>
                       {index + 1}.
                     </Paragraph>
-                    <div>
+                    <div style={{ flex: 1 }}>
                       <Paragraph>{value.en}</Paragraph>
                       <Paragraph
                         style={{ marginTop: "calc(var(--item-space) / 2)" }}
@@ -182,6 +182,7 @@ function App() {
               >
                 <div
                   style={{
+                    width: "auto",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -200,11 +201,13 @@ function App() {
                   </p>
                 </div>
                 <div
-                  style={
-                    audioPlaying && audioPlaying[item.audio_url]
-                      ? { color: "var(--highlight-text)" }
-                      : {}
-                  }
+                  style={{
+                    flex: 1,
+                    color:
+                      audioPlaying && audioPlaying[item.audio_url]
+                        ? "var(--highlight-text)"
+                        : "",
+                  }}
                 >
                   <Paragraph>
                     {parse(
