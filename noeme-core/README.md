@@ -1,10 +1,10 @@
 ```sh
-cargo add explainer
+cargo add noeme
 ```
 
 ```rust
 use anyhow::Result;
-use explainer::{Explainer,Jsonify}
+use noeme::{Noeme,Jsonify}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -12,21 +12,21 @@ async fn main() -> Result<()> {
     let word = "exactly";
 
     //this will get the instance
-    let explainer = Explainer::from(word).await?;
+    let noeme = Noeme::from(word).await?;
 
     //serialize the whole instance to json
-    let result = explainer.to_json()?;
+    let result = noeme.to_json()?;
 
     //or just serialize the pronunciation field to json
-    let pronunciation = explainer.pronunciation.to_json()?;
+    let pronunciation = noeme.pronunciation.to_json()?;
 
     //or just serialize the basic_meanings field to json
-    let basic_meanings = explainer.basic_meanings.to_json()?;
+    let basic_meanings = noeme.basic_meanings.to_json()?;
 
     //or just serialize the advanced_meanings field to json
-    let advanced_meanings = explainer.advanced_meanings.to_json()?;
+    let advanced_meanings = noeme.advanced_meanings.to_json()?;
 
     //or just serialize the sentences field to json
-    let sentences = explainer.sentences.to_json()?;
+    let sentences = noeme.sentences.to_json()?;
 }
 ```

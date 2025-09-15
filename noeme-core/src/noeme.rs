@@ -71,7 +71,7 @@ impl Jsonify for Vec<SentenceItem> {
 }
 
 #[derive(Debug, Serialize)]
-pub struct Explainer {
+pub struct Noeme {
     pub word: String,
     pub pronunciation: Pronunciation,
     pub basic_meanings: Vec<BasicMeaningItem>,
@@ -79,7 +79,7 @@ pub struct Explainer {
     pub sentences: Vec<SentenceItem>,
 }
 
-impl Jsonify for Explainer {
+impl Jsonify for Noeme {
     fn to_json(&self) -> Result<String> {
         let serialized = serde_json::to_string(&self)?;
 
@@ -272,19 +272,19 @@ impl Source {
     }
 }
 
-impl Explainer {
-    /// Create explainer instance.
+impl Noeme {
+    /// Create noeme instance.
     ///
     /// # Examples
     /// ```
-    /// use explainer::Explainer;
+    /// use noeme::Noeme;
     ///
     /// #[tokio::main]
     /// async fn main() {
     ///     let word = "exactly";
-    ///     let explainer = Explainer::from(word).await;
+    ///     let noeme = Noeme::from(word).await;
     ///
-    ///     assert!(explainer.is_ok());
+    ///     assert!(noeme.is_ok());
     /// }
     /// ```
     pub async fn from(word: &str) -> Result<Self> {

@@ -1,5 +1,5 @@
 import { closeDocument, createDocument } from "@/lib/offscreen";
-import init, { explain, type Explainer } from "../../wasm";
+import init, { explain, type Noeme } from "../../wasm";
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   (async () => {
@@ -29,7 +29,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 async function fetchExplainedData(
   word: string,
-  sendResponse: (response: Explainer | undefined) => void
+  sendResponse: (response: Noeme | undefined) => void
 ) {
   const cached = await chrome.storage.local.get(word);
 

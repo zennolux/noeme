@@ -1,16 +1,16 @@
 [package]
-name = "explainer"
+name = "noeme"
 version = "0.1.4"
 edition = "2024"
 
-description = "Explain a given word, including its pronunciation, meanings, and sample sentences."
-keywords = ["explainer"]
+description = "Deeply explain a given word, including its pronunciation, meanings, and sample sentences."
+keywords = ["noeme"]
 
 authors = ["zennolux <zennolux@gmail.com>"]
 license = "MIT"
 
-repository = "https://github.com/zennolux/explainer"
-documentation = "https://docs.rs/explainer"
+repository = "https://github.com/zennolux/noeme"
+documentation = "https://docs.rs/noeme"
 readme = "README.md"
 
 [dependencies]

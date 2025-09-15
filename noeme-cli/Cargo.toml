@@ -1,10 +1,10 @@
 [package]
-name = "explainer-cli"
+name = "noeme-cli"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-explainer = { path = "../explainer-core" }
+noeme = { path = "../noeme-core" }
 anyhow = "1.0.98"
 tokio = { version = "1.47.0", features = ["full"] }
 clap = { version = "4.5.43", features = ["derive"] }

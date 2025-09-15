@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import parse from "html-react-parser";
-import { type Explainer } from "../../../wasm";
+import { type Noeme } from "../../../wasm";
 import {
   AttrTag,
   AudioPlayer,
@@ -10,11 +10,11 @@ import {
   Header,
   Paragraph,
   Title,
-} from "@/components/explainer";
+} from "@/components/noeme";
 
 function App() {
   const [open, setOpen] = useState<boolean | undefined>();
-  const [explainer, setExplainer] = useState<Explainer | undefined>();
+  const [noeme, setNoeme] = useState<Noeme | undefined>();
   const [audioPlaying, setAudioPlaying] = useState<{
     [prop: string]: boolean;
   }>();
@@ -37,12 +37,12 @@ function App() {
 
       chrome.runtime.sendMessage(
         { type: "FETCH_EXPLAINED_DATA", target: "background", data: { word } },
-        (response: Explainer | undefined) => {
+        (response: Noeme | undefined) => {
           if (!response) {
             return;
           }
 
-          setExplainer(response);
+          setNoeme(response);
         }
       );
     });
@@ -66,12 +66,12 @@ function App() {
     });
   }, []);
 
-  useEffect(() => explainer && setOpen(true), [explainer]);
+  useEffect(() => noeme && setOpen(true), [noeme]);
 
   return (
     <Container open={open} setOpen={setOpen}>
       <Header>
-        <Title size="large">{explainer?.word}</Title>
+        <Title size="large">{noeme?.word}</Title>
         <div
           style={{
             display: "flex",
@@ -79,26 +79,25 @@ function App() {
             gap: "var(--item-space)",
           }}
         >
-          <p>[{explainer?.pronunciation.phonetic_symbol}]</p>
+          <p>[{noeme?.pronunciation.phonetic_symbol}]</p>
           <p>
             <AudioPlayer
-              url={explainer?.pronunciation.audio_url!}
+              url={noeme?.pronunciation.audio_url!}
               onPlay={(url: string) => {
                 setAudioPlaying({ [url]: true });
               }}
               isPlaying={
-                audioPlaying &&
-                audioPlaying[explainer?.pronunciation.audio_url!]
+                audioPlaying && audioPlaying[noeme?.pronunciation.audio_url!]
               }
             />
           </p>
         </div>
       </Header>
       <Content>
-        {explainer?.basic_meanings.length! > 0 && (
+        {noeme?.basic_meanings.length! > 0 && (
           <div style={{ padding: "0 var(--item-space) 0 var(--item-space)" }}>
             <Title>Basic Meanings:</Title>
-            {explainer?.basic_meanings.map((item, index) => (
+            {noeme?.basic_meanings.map((item, index) => (
               <div
                 key={index}
                 style={{
@@ -114,14 +113,14 @@ function App() {
             ))}
           </div>
         )}
-        {explainer?.advanced_meanings.length! > 0 && (
+        {noeme?.advanced_meanings.length! > 0 && (
           <div
             style={{
               padding: "0 var(--item-space) 0 var(--item-space)",
             }}
           >
             <Title>Advanced Meanings:</Title>
-            {explainer?.advanced_meanings.map((item, key) => (
+            {noeme?.advanced_meanings.map((item, key) => (
               <div
                 key={key}
                 style={{
@@ -158,12 +157,12 @@ function App() {
             ))}
           </div>
         )}
-        {explainer?.sentences.length! > 0 && (
+        {noeme?.sentences.length! > 0 && (
           <div>
             <Title style={{ paddingLeft: "var(--item-space)" }}>
               Sample Sentences:
             </Title>
-            {explainer?.sentences.map((item, index) => (
+            {noeme?.sentences.map((item, index) => (
               <div
                 key={index}
                 style={{
@@ -209,7 +208,7 @@ function App() {
                   <Paragraph>
                     {parse(
                       item.en.replace(
-                        new RegExp(`(${explainer.word})`, "gi"),
+                        new RegExp(`(${noeme.word})`, "gi"),
                         `<span className="tw:font-bold tw:underline tw:underline-offset-8">$1</span>`
                       )
                     )}

@@ -1,0 +1,16 @@
+{
+  "name": "noeme-wasm",
+  "type": "module",
+  "version": "0.3.1",
+  "files": [
+    "./pkg/noeme_wasm_bg.wasm",
+    "./pkg/noeme_wasm.js",
+    "./pkg/noeme_wasm.d.ts",
+    "./noeme.d.ts"
+  ],
+  "main": "./pkg/noeme_wasm.js",
+  "types": "./noeme.d.ts",
+  "sideEffects": [
+    "./pkg/snippets/*"
+  ]
+}
