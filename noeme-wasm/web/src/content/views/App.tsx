@@ -59,7 +59,6 @@ function App() {
       }
 
       setAudioPlaying({ [data.url]: false });
-
       sendResponse(true);
 
       return true;
@@ -79,18 +78,16 @@ function App() {
             gap: "var(--item-space)",
           }}
         >
-          <p>[{noeme?.pronunciation.phonetic_symbol}]</p>
-          <p>
-            <AudioPlayer
-              url={noeme?.pronunciation.audio_url!}
-              onPlay={(url: string) => {
-                setAudioPlaying({ [url]: true });
-              }}
-              isPlaying={
-                audioPlaying && audioPlaying[noeme?.pronunciation.audio_url!]
-              }
-            />
-          </p>
+          <Paragraph>[{noeme?.pronunciation.phonetic_symbol}]</Paragraph>
+          <AudioPlayer
+            url={noeme?.pronunciation.audio_url!}
+            onPlay={(url: string) => {
+              setAudioPlaying({ [url]: true });
+            }}
+            isPlaying={
+              audioPlaying && audioPlaying[noeme?.pronunciation.audio_url!]
+            }
+          />
         </div>
       </Header>
       <Content>
