@@ -4,7 +4,7 @@ import "@/index.css";
 import App from "./views/App.tsx";
 
 const container = document.createElement("div");
-container.id = "explainer";
+container.id = "noeme";
 
 document.body.appendChild(container);
 createRoot(container).render(
