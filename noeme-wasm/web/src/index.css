@@ -1,20 +1,22 @@
-@import "tailwindcss" prefix(tw);
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --animate-explainer-appear: explainer-appear 1.2s ease-in-out forwards;
-  --animate-explainer-disappear: explainer-disappear 1.2s ease-in-out forwards;
+  --animate-noeme-appear: noeme-appear 1.2s ease-in-out forwards;
+  --animate-noeme-disappear: noeme-disappear 1.2s ease-in-out forwards;
 }
 
-@keyframes explainer-appear {
+@keyframes noeme-appear {
   to {
     right: 0;
   }
 }
 
-@keyframes explainer-disappear {
+@keyframes noeme-disappear {
   from {
     display: block;
     right: 0;
@@ -25,7 +27,7 @@
   }
 }
 
-#explainer {
+#noeme {
   --container-width: 400px;
   --item-space: 16px;
   --highlight-bg: #101828;
