@@ -24,9 +24,9 @@ export function Container({
     <div
       className={`${
         open
-          ? "tw:animate-explainer-appear"
+          ? "tw:animate-noeme-appear"
           : open === false
-          ? "tw:animate-explainer-disappear"
+          ? "tw:animate-noeme-disappear"
           : "tw:hidden"
       }`}
       style={{
