@@ -1,8 +1,7 @@
-<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;">
+<p align="center">
   <img src="./noeme-wasm/web/public/logo128.png" />
-  <h1>Noeme</h1>
-</div>
-
+</p>
+<h1 align="center">Noeme</h1>
 
 Noeme does more than just give a simple definition-it provides a deep, contextual explanation of a word, including its:
 
