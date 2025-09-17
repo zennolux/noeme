@@ -5,8 +5,11 @@ export default defineManifest({
   manifest_version: 3,
   name: pkg.name,
   version: pkg.version,
+  description:
+    "Noeme is your powerful sidekick for mastering tricky vocabulary.",
   icons: {
-    48: "public/logo.png",
+    48: "public/logo48.png",
+    128: "public/logo128.png",
   },
   permissions: [
     "contentSettings",
