@@ -17,7 +17,7 @@ Noeme does more than just give a simple definition-it provides a deep, contextua
 
 See: [https://crates.io/crates/noeme](https://crates.io/crates/noeme)
 
-#### Builtin applications
+#### Built-in applications
 
 > As a Chrome extension
 
