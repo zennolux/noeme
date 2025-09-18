@@ -42,8 +42,16 @@ async function fetchExplainedData(
       const explainer = await explain(word);
 
       sendResponse(explainer);
+
       await chrome.storage.local.set({ [word]: explainer });
     } catch (error) {
+      if (
+        typeof error === "object" &&
+        (error as Object)?.toString().includes("quota exceeded")
+      ) {
+        await chrome.storage.local.clear();
+      }
+
       sendResponse(undefined);
     }
   }
