@@ -71,24 +71,26 @@ function App() {
     <Container open={open} setOpen={setOpen}>
       <Header>
         <Title size="large">{noeme?.word}</Title>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "var(--item-space)",
-          }}
-        >
-          <Paragraph>[{noeme?.pronunciation.phonetic_symbol}]</Paragraph>
-          <AudioPlayer
-            url={noeme?.pronunciation.audio_url!}
-            onPlay={(url: string) => {
-              setAudioPlaying({ [url]: true });
+        {noeme?.pronunciation?.audio_url?.length! > 0 && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "var(--item-space)",
             }}
-            isPlaying={
-              audioPlaying && audioPlaying[noeme?.pronunciation.audio_url!]
-            }
-          />
-        </div>
+          >
+            <Paragraph>[{noeme?.pronunciation.phonetic_symbol}]</Paragraph>
+            <AudioPlayer
+              url={noeme?.pronunciation.audio_url!}
+              onPlay={(url: string) => {
+                setAudioPlaying({ [url]: true });
+              }}
+              isPlaying={
+                audioPlaying && audioPlaying[noeme?.pronunciation.audio_url!]
+              }
+            />
+          </div>
+        )}
       </Header>
       <Content>
         {noeme?.basic_meanings.length! > 0 && (
