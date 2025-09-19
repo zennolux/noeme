@@ -119,7 +119,7 @@ impl Source {
             audio_selector: Self::parse_selector("#bigaud_us")?,
             advanced_meanings_selector: Self::parse_selector("#newLeId .each_seg")?,
             basic_meanings_selector: Self::parse_selector(".qdef ul li")?,
-            basic_meaning_attr_selector: Self::parse_selector(".pos:not(.web)")?,
+            basic_meaning_attr_selector: Self::parse_selector(".pos")?,
             basic_meaning_value_selector: Self::parse_selector(".def,b_regtxt")?,
             advanced_meaning_attr_selector: Self::parse_selector(".pos_lin .pos")?,
             advanced_meaning_items_selector: Self::parse_selector(".def_pa")?,
@@ -177,7 +177,10 @@ impl Source {
                 if let Some(attr) = self.get_text(element, &self.basic_meaning_attr_selector) {
                     let value = self.get_text(element, &self.basic_meaning_value_selector)?;
 
-                    items.as_mut()?.push(BasicMeaningItem { attr, value });
+                    items.as_mut()?.push(BasicMeaningItem {
+                        attr: attr.replace("网络", "Web"),
+                        value,
+                    });
                     items
                 } else {
                     items
@@ -294,9 +297,17 @@ impl Noeme {
             return Err(anyhow!("No results found for {:?}.", word));
         }
 
+        let pronunciation = match source.find_pronunciation() {
+            Some(pronunciation) => pronunciation,
+            None => Pronunciation {
+                phonetic_symbol: "".to_string(),
+                audio_url: "".to_string(),
+            },
+        };
+
         Ok(Self {
             word: word.to_string(),
-            pronunciation: source.find_pronunciation().unwrap(),
+            pronunciation,
             basic_meanings: source.find_basic_meanings().unwrap(),
             advanced_meanings: source.find_advanced_meanings().unwrap(),
             sentences: source.find_sentences().unwrap(),
