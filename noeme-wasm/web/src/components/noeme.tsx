@@ -155,7 +155,7 @@ export function AttrTag({ value }: { value: string }) {
         margin: 0,
         padding: 0,
         fontWeight: "bold",
-        background: "#99a1af",
+        background: value == "Web" ? "#6a7282" : "#99a1af",
         width: "64px",
         height: "24px",
         display: "flex",
