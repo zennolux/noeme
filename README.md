@@ -21,4 +21,4 @@ See: [https://crates.io/crates/noeme](https://crates.io/crates/noeme)
 
 > As a Chrome extension
 
-> Working in progress!
+![Image](https://github.com/user-attachments/assets/dc2afae6-6a12-4df8-84e6-06048bffcaa5)
