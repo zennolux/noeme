@@ -110,7 +110,7 @@ impl Source {
     const DOMAIN: &str = "https://cn.bing.com";
 
     async fn load(word: &str) -> Result<Self> {
-        let url = format!("{}/dict/search?q={}", Self::DOMAIN, word);
+        let url = format!("{}/dict/search?mkt=zh-CN&q={}", Self::DOMAIN, word);
         let html = reqwest::get(url).await?.text().await?;
 
         Ok(Self {
