@@ -20,6 +20,6 @@ See: [https://crates.io/crates/noeme](https://crates.io/crates/noeme)
 
 #### Built-in applications
 
-> As a Chrome extension
+> As a broswer extension
 
 ![Image](https://github.com/user-attachments/assets/dc2afae6-6a12-4df8-84e6-06048bffcaa5)
