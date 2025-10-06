@@ -63,6 +63,78 @@ function App() {
 
       return true;
     });
+
+    const treeworker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      (node) => {
+        if (!node.parentElement?.closest("p,span")) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    );
+
+    const word = "sidekick";
+    const matches: { node: Node; parent: HTMLElement }[] = [];
+
+    while (treeworker.nextNode()) {
+      const node: Node = treeworker.currentNode;
+
+      if (node.textContent?.includes(word) && node.parentElement) {
+        console.info(node.textContent, node.parentElement);
+        matches.push({ node, parent: node.parentElement });
+      }
+    }
+
+    console.info(matches);
+    highlight(matches);
+
+    function htmlToNodes(html: string) {
+      const template = document.createElement("template");
+      template.innerHTML = html;
+      return Array.from(template.content.childNodes);
+    }
+
+    function highlight(nodes: { node: Node; parent: HTMLElement }[]) {
+      nodes.forEach(({ node }) => {
+        const html = node.textContent!.replace(
+          new RegExp(word, "g"),
+          `<span class="noeme-highlighted-word" style="color:lightpink;font-weight:bolder;cursor:pointer;text-decoration-line:underline;text-underline-offset:5px;">${word}</span>`
+        );
+        (node as HTMLElement).replaceWith(...htmlToNodes(html));
+      });
+    }
+
+    const observer = new MutationObserver((mutationList) => {
+      const m: { node: Node; parent: HTMLElement }[] = [];
+
+      for (const mutation of mutationList) {
+        const addedNodes = [...mutation.addedNodes].filter(
+          (node) => node.nodeName == "#text" || node.nodeName == "SPAN"
+        );
+
+        if (addedNodes.length < 1) {
+          continue;
+        }
+
+        addedNodes.forEach((node) => {
+          if (node.textContent?.includes(word) && node.parentElement) {
+            m.push({ node, parent: node.parentElement });
+          }
+        });
+
+        console.info("A child node has been added.", mutation.addedNodes);
+      }
+
+      highlight(m);
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+    //observer.disconnect();
   }, []);
 
   useEffect(() => noeme && setOpen(true), [noeme]);
