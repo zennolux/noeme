@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && cp ./src/offscreen ./dist/src/ -r && tsc src/offscreen/offscreen.ts --outDir dist/src/offscreen",
+    "build": "tsc -b && vite build && tsc src/offscreen/offscreen.ts --outDir dist/src/offscreen && cp ./src/offscreen/offscreen.html ./dist/src/offscreen  ",
     "preview": "vite preview"
   },
   "dependencies": {
