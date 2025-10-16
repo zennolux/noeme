@@ -23,3 +23,11 @@ See: [https://crates.io/crates/noeme](https://crates.io/crates/noeme)
 > As a browser extension
 
 ![Image](https://github.com/user-attachments/assets/dc2afae6-6a12-4df8-84e6-06048bffcaa5)
+
+Installation:
+|Browser|Download|
+|---|---|
+|Edge|[https://microsoftedge.microsoft.com/addons/detail/enajjophkmjfbkecmibdhdefljajklie](https://microsoftedge.microsoft.com/addons/detail/enajjophkmjfbkecmibdhdefljajklie)|
+
+
+
