@@ -1,0 +1,316 @@
+use anyhow::{anyhow, Result};
+use scraper::{selectable::Selectable, Html, Selector};
+use serde::Serialize;
+use voca_rs::strip::strip_tags;
+
+pub trait Jsonify {
+    fn to_json(&self) -> Result<String>;
+}
+
+#[derive(Debug, Serialize)]
+pub struct Pronunciation {
+    phonetic_symbol: String,
+    audio_url: String,
+}
+
+impl Jsonify for Pronunciation {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct BasicMeaningItem {
+    attr: String,
+    value: String,
+}
+
+impl Jsonify for Vec<BasicMeaningItem> {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
+#[derive(Debug, Serialize)]
+struct AdvancedMeaningValue {
+    cn: String,
+    en: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AdvancedMeaningItem {
+    attr: String,
+    values: Vec<AdvancedMeaningValue>,
+}
+
+impl Jsonify for Vec<AdvancedMeaningItem> {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct SentenceItem {
+    en: String,
+    cn: String,
+    audio_url: String,
+}
+
+impl Jsonify for Vec<SentenceItem> {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct Noeme {
+    pub word: String,
+    pub pronunciation: Pronunciation,
+    pub basic_meanings: Vec<BasicMeaningItem>,
+    pub advanced_meanings: Vec<AdvancedMeaningItem>,
+    pub sentences: Vec<SentenceItem>,
+}
+
+impl Jsonify for Noeme {
+    fn to_json(&self) -> Result<String> {
+        let serialized = serde_json::to_string(&self)?;
+
+        Ok(serialized)
+    }
+}
+
+struct Source {
+    document: Html,
+    pronunciation_selector: Selector,
+    audio_selector: Selector,
+    basic_meanings_selector: Selector,
+    basic_meaning_attr_selector: Selector,
+    basic_meaning_value_selector: Selector,
+    advanced_meanings_selector: Selector,
+    advanced_meaning_attr_selector: Selector,
+    advanced_meaning_items_selector: Selector,
+    advanced_meaning_item_cn_selector: Selector,
+    advanced_meaning_item_en_selector: Selector,
+    sentence_items_selector: Selector,
+    sentence_item_en_selector: Selector,
+    sentence_item_cn_selector: Selector,
+    sentence_item_audio_selector: Selector,
+    no_results_selector: Selector,
+}
+
+impl Source {
+    const DOMAIN: &str = "https://cn.bing.com";
+
+    async fn load(word: &str) -> Result<Self> {
+        let url = format!("{}/dict/search?mkt=zh-CN&q={}", Self::DOMAIN, word);
+        let html = reqwest::get(url).await?.text().await?;
+
+        Ok(Self {
+            document: Html::parse_document(html.as_str()),
+            pronunciation_selector: Self::parse_selector(".hd_prUS")?,
+            audio_selector: Self::parse_selector("#bigaud_us")?,
+            advanced_meanings_selector: Self::parse_selector("#newLeId .each_seg")?,
+            basic_meanings_selector: Self::parse_selector(".qdef ul li")?,
+            basic_meaning_attr_selector: Self::parse_selector(".pos")?,
+            basic_meaning_value_selector: Self::parse_selector(".def,b_regtxt")?,
+            advanced_meaning_attr_selector: Self::parse_selector(".pos_lin .pos")?,
+            advanced_meaning_items_selector: Self::parse_selector(".def_pa")?,
+            advanced_meaning_item_cn_selector: Self::parse_selector(".bil, .b_primtxt")?,
+            advanced_meaning_item_en_selector: Self::parse_selector(".val, .b_regtxt")?,
+            sentence_items_selector: Self::parse_selector(".se_li1")?,
+            sentence_item_en_selector: Self::parse_selector(".sen_en")?,
+            sentence_item_cn_selector: Self::parse_selector(".sen_cn")?,
+            sentence_item_audio_selector: Self::parse_selector(".bdsen_audio")?,
+            no_results_selector: Self::parse_selector(".no_results")?,
+        })
+    }
+
+    fn parse_selector(selectors: &str) -> Result<Selector> {
+        if let Ok(selector) = Selector::parse(selectors) {
+            Ok(selector)
+        } else {
+            Err(anyhow!("Unable to parse selectors {:?}", selectors))
+        }
+    }
+
+    fn get_text<'a, T>(&self, document: T, selector: &Selector) -> Option<String>
+    where
+        T: Selectable<'a>,
+    {
+        Some(document.select(selector).next()?.text().collect::<String>())
+    }
+
+    fn find_pronunciation(&self) -> Option<Pronunciation> {
+        let phonetic_symbol = self
+            .get_text(&self.document, &self.pronunciation_selector)?
+            .split("[")
+            .last()?
+            .replace("]", "");
+
+        let audio_url = format!(
+            "{}{}",
+            Self::DOMAIN,
+            self.document
+                .select(&self.audio_selector)
+                .next()?
+                .attr("data-mp3link")?
+        );
+
+        Some(Pronunciation {
+            phonetic_symbol,
+            audio_url,
+        })
+    }
+
+    fn find_basic_meanings(&self) -> Option<Vec<BasicMeaningItem>> {
+        self.document.select(&self.basic_meanings_selector).fold(
+            Some(vec![]),
+            |mut items: Option<Vec<BasicMeaningItem>>, element| {
+                if let Some(attr) = self.get_text(element, &self.basic_meaning_attr_selector) {
+                    let value = self.get_text(element, &self.basic_meaning_value_selector)?;
+
+                    items.as_mut()?.push(BasicMeaningItem {
+                        attr: attr.replace("网络", "Web"),
+                        value,
+                    });
+                    items
+                } else {
+                    items
+                }
+            },
+        )
+    }
+
+    fn find_advanced_meanings(&self) -> Option<Vec<AdvancedMeaningItem>> {
+        self.document.select(&self.advanced_meanings_selector).fold(
+            Some(vec![]),
+            |mut meaning_item, parent_element| {
+                let attr = self.get_text(parent_element, &self.advanced_meaning_attr_selector)?;
+                let values: Vec<AdvancedMeaningValue> = parent_element
+                    .select(&self.advanced_meaning_items_selector)
+                    .fold(
+                        Some(vec![]),
+                        |mut meaning_values, child_element| -> Option<Vec<AdvancedMeaningValue>> {
+                            meaning_values.as_mut()?.push(AdvancedMeaningValue {
+                                cn: self.get_text(
+                                    child_element,
+                                    &self.advanced_meaning_item_cn_selector,
+                                )?,
+                                en: self.get_text(
+                                    child_element,
+                                    &self.advanced_meaning_item_en_selector,
+                                )?,
+                            });
+                            meaning_values
+                        },
+                    )?;
+
+                if values.len() > 0 {
+                    meaning_item
+                        .as_mut()?
+                        .push(AdvancedMeaningItem { attr, values });
+                }
+
+                meaning_item
+            },
+        )
+    }
+
+    fn find_sentences(&self) -> Option<Vec<SentenceItem>> {
+        self.document.select(&self.sentence_items_selector).fold(
+            Some(vec![]),
+            |mut sentence_item, parent_element| {
+                for (key, child_element) in parent_element
+                    .select(&self.sentence_item_en_selector)
+                    .enumerate()
+                {
+                    let find = |selector: &Selector| {
+                        parent_element
+                            .select(selector)
+                            .enumerate()
+                            .find(|(idx, _e)| *idx == key)
+                    };
+
+                    let en = strip_tags(child_element.inner_html().as_str());
+
+                    let cn = strip_tags(
+                        find(&self.sentence_item_cn_selector)?
+                            .1
+                            .inner_html()
+                            .as_str(),
+                    );
+
+                    let audio_url = format!(
+                        "{}{}",
+                        Self::DOMAIN,
+                        strip_tags(
+                            find(&self.sentence_item_audio_selector)?
+                                .1
+                                .attr("data-mp3link")?
+                        )
+                    );
+
+                    sentence_item
+                        .as_mut()?
+                        .push(SentenceItem { en, cn, audio_url });
+                }
+                sentence_item
+            },
+        )
+    }
+
+    fn has_results(&self) -> bool {
+        self.document
+            .select(&self.no_results_selector)
+            .next()
+            .is_none()
+    }
+}
+
+impl Noeme {
+    /// Create noeme instance.
+    ///
+    /// # Examples
+    /// ```
+    /// use noeme::Noeme;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     let word = "exactly";
+    ///     let noeme = Noeme::from(word).await;
+    ///
+    ///     assert!(noeme.is_ok());
+    /// }
+    /// ```
+    pub async fn from(word: &str) -> Result<Self> {
+        let source = Source::load(word).await?;
+
+        if !source.has_results() {
+            return Err(anyhow!("No results found for {:?}.", word));
+        }
+
+        let pronunciation = match source.find_pronunciation() {
+            Some(pronunciation) => pronunciation,
+            None => Pronunciation {
+                phonetic_symbol: "".to_string(),
+                audio_url: "".to_string(),
+            },
+        };
+
+        Ok(Self {
+            word: word.to_string(),
+            pronunciation,
+            basic_meanings: source.find_basic_meanings().unwrap(),
+            advanced_meanings: source.find_advanced_meanings().unwrap(),
+            sentences: source.find_sentences().unwrap(),
+        })
+    }
+}

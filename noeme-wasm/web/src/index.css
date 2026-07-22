@@ -1,0 +1,44 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --animate-noeme-appear: noeme-appear 1.2s ease-in-out forwards;
+  --animate-noeme-disappear: noeme-disappear 1.2s ease-in-out forwards;
+}
+
+@keyframes noeme-appear {
+  to {
+    right: 0;
+  }
+}
+
+@keyframes noeme-disappear {
+  from {
+    display: block;
+    right: 0;
+  }
+
+  to {
+    right: calc(-1 * var(--container-width));
+  }
+}
+
+#noeme {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    margin: 0;
+    padding: 0;
+  }
+
+  --container-width: 400px;
+  --item-space: 16px;
+  --highlight-bg: #101828;
+  --highlight-text: #e5e7eb;
+}

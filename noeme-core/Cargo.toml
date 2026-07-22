@@ -1,0 +1,25 @@
+[package]
+name = "noeme"
+version = "0.1.6"
+edition = "2024"
+
+description = "Deeply explain a given word, including its pronunciation, meanings, and sample sentences."
+keywords = ["noeme"]
+
+authors = ["zennolux <zennolux@gmail.com>"]
+license = "MIT"
+
+repository = "https://github.com/zennolux/noeme"
+documentation = "https://docs.rs/noeme"
+readme = "README.md"
+
+[dependencies]
+anyhow = "1.0.98"
+reqwest = "0.12.22"
+scraper = "0.23.1"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.142"
+voca_rs = "1.15.2"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { version = "1.47.0", features = ["full"] }

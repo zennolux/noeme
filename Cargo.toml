@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members = [ "noeme-cli","noeme-core", "noeme-dasktop/src-tauri", "noeme-wasm"]
