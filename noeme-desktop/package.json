@@ -14,6 +14,7 @@
     "@tauri-apps/plugin-opener": "^2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-image-crop": "^11.1.2",
     "tauri-plugin-screenshots-api": "^2.2.0"
   },
   "devDependencies": {

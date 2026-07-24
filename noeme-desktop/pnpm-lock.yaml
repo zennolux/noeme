@@ -20,6 +20,9 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.2.8(react@19.2.8)
+      react-image-crop:
+        specifier: ^11.1.2
+        version: 11.1.2(react@19.2.8)
       tauri-plugin-screenshots-api:
         specifier: ^2.2.0
         version: 2.2.0
@@ -654,6 +657,11 @@ packages:
     peerDependencies:
       react: ^19.2.8
 
+  react-image-crop@11.1.2:
+    resolution: {integrity: sha512-+0Pc2fxpwKL4u4oLmdKBw8XSwUceFbXbKEHvFOlsl/MGB1OVNic4uBlAPmEHGXYgoJIq+b63xHbc/aJMG0AVkA==}
+    peerDependencies:
+      react: '>=16.13.1'
+
   react-refresh@0.17.0:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
@@ -1215,6 +1223,10 @@ snapshots:
     dependencies:
       react: 19.2.8
       scheduler: 0.27.0
+
+  react-image-crop@11.1.2(react@19.2.8):
+    dependencies:
+      react: 19.2.8
 
   react-refresh@0.17.0: {}
 
