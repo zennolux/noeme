@@ -3,5 +3,11 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": ["main"],
-  "permissions": ["core:default", "opener:default", "screenshots:default"]
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "screenshots:default",
+    "core:webview:default",
+    "core:webview:allow-create-webview-window"
+  ]
 }

@@ -1,64 +1,87 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { useEffect, useState } from "react";
+//import reactLogo from "./assets/react.svg";
+//import { invoke } from "@tauri-apps/api/core";
+//import "./App.css";
+import "react-image-crop/dist/ReactCrop.css";
 
+//import {
+//  getMonitorScreenshot,
+//  getScreenshotableMonitors,
+//} from "tauri-plugin-screenshots-api";
+import ReactCrop, { type Crop } from "react-image-crop";
 import {
-  getMonitorScreenshot,
-  getScreenshotableMonitors,
-} from "tauri-plugin-screenshots-api";
+  getCurrentWebviewWindow,
+  WebviewWindow,
+} from "@tauri-apps/api/webviewWindow";
+import { currentMonitor } from "@tauri-apps/api/window";
+import { webview } from "@tauri-apps/api";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  async function createScreenshotableWindow() {
+    const monitor = await currentMonitor();
 
-  async function screenshot() {
-    const monitors = await getScreenshotableMonitors();
-    const path = await getMonitorScreenshot(monitors[0].id);
-    console.info(path);
+    if (!monitor) {
+      return;
+    }
+
+    console.info(monitor);
+
+    //const currentWindow = getCurrentWebviewWindow();
+    //await currentWindow.hide();
+
+    const webview = new WebviewWindow("screenshot", {
+      url: "https://google.com",
+      visible: true,
+    });
+
+    //webview.setPosition(monitor?.position);
+    //webview.setSize(monitor?.size);
+    //webview.show();
+
+    webview.once("tauri://created", () => {
+      console.info("webview-created");
+    });
+
+    webview.once("tauri://error", (e) => {
+      console.info(e);
+    });
   }
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  //const [greetMsg, setGreetMsg] = useState("");
+  //const [name, setName] = useState("");
+
+  const [crop, setCrop] = useState<Crop>();
+
+  //async function screenshot() {
+  //  const monitors = await getScreenshotableMonitors();
+  //  const path = await getMonitorScreenshot(monitors[0].id);
+  //  console.info(path);
+  //}
+
+  //async function greet() {
+  //  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+  //  setGreetMsg(await invoke("greet", { name }));
+  //}
+
+  useEffect(() => {
+    if (!crop) {
+      return;
+    }
+    console.info(crop);
+  }, [crop]);
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
+    <>
+      <ReactCrop crop={crop} onChange={(crop) => setCrop(crop)}>
+        <img
+          src="/vite.svg"
+          className="logo vite"
+          style={{ height: "400px", width: "100%" }}
+          alt="Vite logo"
         />
-        <button type="submit">Greet</button>
-        <button type="button" onClick={screenshot}>
-          Screenshot
-        </button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+      </ReactCrop>
+      <button onClick={createScreenshotableWindow}>截图</button>
+    </>
   );
 }
 
