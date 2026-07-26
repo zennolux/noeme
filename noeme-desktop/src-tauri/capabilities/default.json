@@ -2,12 +2,19 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
+  "windows": ["main", "screenshot"],
   "permissions": [
     "core:default",
     "opener:default",
     "screenshots:default",
+    "core:window:default",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-close",
     "core:webview:default",
-    "core:webview:allow-create-webview-window"
+    "core:webview:allow-create-webview-window",
+    "core:resources:default",
+    "core:path:default",
+    "store:default"
   ]
 }
