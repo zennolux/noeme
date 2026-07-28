@@ -3,12 +3,6 @@
 import "./App.css";
 import "react-image-crop/dist/ReactCrop.css";
 import {
-  isRegistered,
-  register,
-  unregister,
-} from "@tauri-apps/plugin-global-shortcut";
-
-import {
   getMonitorScreenshot,
   getScreenshotableMonitors,
 } from "tauri-plugin-screenshots-api";
@@ -19,7 +13,12 @@ import { listen } from "@tauri-apps/api/event";
 
 function App() {
   async function createScreenshotableWindow() {
-    await screenshot();
+    const monitors = await getScreenshotableMonitors();
+    const path = await getMonitorScreenshot(monitors[0].id);
+    const store = await load("store.json");
+
+    await store.set("path-screenshot", path);
+    await store.save();
 
     const webview = new WebviewWindow("screenshot", {
       title: "noeme-screenshot",
@@ -44,39 +43,11 @@ function App() {
   //const [greetMsg, setGreetMsg] = useState("");
   //const [name, setName] = useState("");
 
-  async function screenshot() {
-    const monitors = await getScreenshotableMonitors();
-    const path = await getMonitorScreenshot(monitors[0].id);
-    console.info(path);
-
-    const store = await load("store.json");
-
-    await store.set("path-screenshot", path);
-    await store.save();
-  }
-
-  //@ts-ignore
-  async function registerShortcut() {
-    const shortcut = "CommandOrControl+Shift+F12";
-
-    unregister(shortcut);
-
-    if (await isRegistered(shortcut)) {
-      console.info("Aready registered!");
-      return;
-    }
-
-    await register(shortcut, async (event) => {
-      if (event.state === "Pressed") {
-        console.info("triggered");
-        await createScreenshotableWindow();
-      }
-    });
-  }
-
   useEffect(() => {
-    listen("shortcut-screenshot", () => {
-      console.info("triggered");
+    listen("shortcut-screenshot", (event) => {
+      console.info("triggered", event.payload);
+
+      createScreenshotableWindow();
     });
   }, []);
 

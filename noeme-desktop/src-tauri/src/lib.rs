@@ -16,13 +16,11 @@ pub fn run() {
                 };
 
                 let shortcut_screenshot =
-                    //Shortcut::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::F6);
-                    Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::F12);
+                    Shortcut::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyJ);
 
                 app.handle().plugin(
                     tauri_plugin_global_shortcut::Builder::new()
                         .with_handler(move |app_handle, shortcut, event| {
-                            println!("You pressed {}", shortcut);
                             if shortcut != &shortcut_screenshot {
                                 return ();
                             }
@@ -31,14 +29,12 @@ pub fn run() {
                                 return ();
                             }
 
-                            app_handle.emit("shortcut-screenshot", ()).expect("");
+                            app_handle.emit("shortcut-screenshot", ()).expect("")
                         })
                         .build(),
                 )?;
 
-                app.global_shortcut()
-                    .register(shortcut_screenshot)
-                    .expect("Failed to register shortcut of screenshot");
+                app.global_shortcut().register(shortcut_screenshot)?
             }
 
             Ok(())
