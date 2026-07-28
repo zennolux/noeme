@@ -1,5 +1,5 @@
-import { convertFileSrc } from "@tauri-apps/api/core";
-//import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { invoke, convertFileSrc } from "@tauri-apps/api/core";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import ReactCrop, { type Crop } from "react-image-crop";
@@ -17,8 +17,15 @@ export default function Screenshot() {
   }
 
   async function saveCropedImage() {
-		//const win=getCurrentWebviewWindow()
+    const win = getCurrentWebviewWindow();
     console.info(crop);
+
+    const r = await invoke("greet", { imageArea: crop });
+
+    console.info(r);
+    setTimeout(() => {
+      win.close();
+    }, 0);
   }
 
   //useEffect(() => {
