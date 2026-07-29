@@ -1,4 +1,3 @@
-//import reactLogo from "./assets/react.svg";
 //import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import "react-image-crop/dist/ReactCrop.css";
@@ -8,10 +7,12 @@ import {
 } from "tauri-plugin-screenshots-api";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 
 function App() {
+  const [ocr, setOcr] = useState("");
+
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
     const path = await getMonitorScreenshot(monitors[0].id);
@@ -28,11 +29,8 @@ function App() {
       maximized: true,
       transparent: true,
       resizable: false,
+      alwaysOnTop: true,
       devtools: true,
-    });
-
-    webview.once("tauri://created", async () => {
-      console.info("webview-created");
     });
 
     webview.once("tauri://error", (e) => {
@@ -40,32 +38,17 @@ function App() {
     });
   }
 
-  //const [greetMsg, setGreetMsg] = useState("");
-  //const [name, setName] = useState("");
-
   useEffect(() => {
-    listen("shortcut-screenshot", (event) => {
-      console.info("triggered", event.payload);
-
+    listen("shortcut-screenshot", () => {
       createScreenshotableWindow();
+    });
+
+    listen("ocr-completed", (event) => {
+      setOcr(event.payload as string);
     });
   }, []);
 
-  //async function greet() {
-  //  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  //  setGreetMsg(await invoke("greet", { name }));
-  //}
-
-  return (
-    <>
-      <img
-        src="/vite.svg"
-        className="logo vite"
-        style={{ height: "400px", width: "100%" }}
-        alt="Vite logo"
-      />
-    </>
-  );
+  return <div>{ocr ? <p>Got OCR text: {ocr}</p> : "Ready..."}</div>;
 }
 
 export default App;

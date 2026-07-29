@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
-//import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import ReactCrop, { type Crop } from "react-image-crop";
@@ -20,7 +20,7 @@ export default function Screenshot() {
   }
 
   async function saveCropedImage() {
-    //const win = getCurrentWebviewWindow();
+    const win = getCurrentWebviewWindow();
 
     const { clientWidth, clientHeight, naturalWidth, naturalHeight } =
       imgref.current as unknown as HTMLImageElement;
@@ -38,19 +38,14 @@ export default function Screenshot() {
     };
 
     const path = (await invoke("crop_image", { imageArea })) as string;
-
-    console.info(path);
-    const url = convertFileSrc(path);
-
     const worker = await createWorker("eng");
-    const { data } = await worker.recognize(url);
-
-    console.info("#####", data.text);
+    const { data } = await worker.recognize(convertFileSrc(path));
 
     worker.terminate();
 
     setTimeout(() => {
-      //win.close();
+      win.emitTo("main", "ocr-completed", data.text);
+      win.close();
     }, 0);
   }
 
