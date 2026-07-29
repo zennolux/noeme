@@ -1,19 +1,17 @@
-use serde::Deserialize;
-use tauri::{AppHandle, Manager};
-use tauri_plugin_store::StoreExt;
+mod commands;
 
+/*
 #[derive(Debug, Deserialize)]
 struct ImageArea {
-    height: f64,
-    width: f64,
     x: f64,
     y: f64,
-    unit: String,
+    width: f64,
+    height: f64,
 }
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
-fn greet(app_handle: AppHandle, image_area: ImageArea) -> String {
+fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> String {
     let store = app_handle.store("store.json").unwrap();
 
     if let Some(path) = store.get("path-screenshot") {
@@ -51,10 +49,11 @@ fn greet(app_handle: AppHandle, image_area: ImageArea) -> String {
     }
 
     format!(
-        "Hello, W:{:#?},H:{:#?},X:{:#?},Y:{:#?},U:{:#?}! You've been greeted from Rust!",
-        image_area.width, image_area.height, image_area.x, image_area.y, image_area.unit
+        "Hello, W:{:#?},H:{:#?},X:{:#?},Y:{:#?}! You've been greeted from Rust!",
+        image_area.width, image_area.height, image_area.x, image_area.y
     )
 }
+*/
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -94,7 +93,7 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_screenshots::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![commands::crop_image])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

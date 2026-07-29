@@ -1,13 +1,16 @@
+import { useRef } from "react";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+//import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import { createWorker } from "tesseract.js";
 
 export default function Screenshot() {
   const [imgurl, setImgUrl] = useState<string | undefined>();
   const [crop, setCrop] = useState<Crop>();
+  const imgref = useRef(null);
 
   async function getFullScreenImage() {
     const store = await load("store.json");
@@ -17,23 +20,39 @@ export default function Screenshot() {
   }
 
   async function saveCropedImage() {
-    const win = getCurrentWebviewWindow();
-    console.info(crop);
+    //const win = getCurrentWebviewWindow();
 
-    const r = await invoke("greet", { imageArea: crop });
+    const { clientWidth, clientHeight, naturalWidth, naturalHeight } =
+      imgref.current as unknown as HTMLImageElement;
 
-    console.info(r);
+    const [scaleX, scaleY] = [
+      naturalWidth / clientWidth,
+      naturalHeight / clientHeight,
+    ];
+
+    const imageArea = {
+      x: crop!.x * scaleX,
+      y: crop!.y * scaleY,
+      width: crop!.width * scaleX,
+      height: crop!.height * scaleY,
+    };
+
+    const path = (await invoke("crop_image", { imageArea })) as string;
+
+    console.info(path);
+    const url = convertFileSrc(path);
+
+    const worker = await createWorker("eng");
+    const { data } = await worker.recognize(url);
+
+    console.info("#####", data.text);
+
+    worker.terminate();
+
     setTimeout(() => {
-      win.close();
+      //win.close();
     }, 0);
   }
-
-  //useEffect(() => {
-  //  if (!crop || crop.x == 0 || crop.y == 0) {
-  //    return;
-  //  }
-  //  console.info(crop);
-  //}, [crop]);
 
   useEffect(() => {
     getFullScreenImage();
@@ -44,7 +63,7 @@ export default function Screenshot() {
       {imgurl ? (
         <>
           <ReactCrop crop={crop} onChange={(crop) => setCrop(crop)}>
-            <img style={{ margin: 0, padding: 0 }} src={imgurl} />
+            <img ref={imgref} style={{ margin: 0, padding: 0 }} src={imgurl} />
           </ReactCrop>
           <button
             onClick={saveCropedImage}
