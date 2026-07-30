@@ -25,6 +25,8 @@ serde_json = "1"
 tauri-plugin-screenshots = "2.2.0"
 tauri-plugin-store = "2"
 image = "0.25.10"
+selectic = "0.1.0"
+tauri-plugin-user-input = "0.1.1"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"

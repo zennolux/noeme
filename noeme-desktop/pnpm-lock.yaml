@@ -35,6 +35,9 @@ importers:
       tauri-plugin-screenshots-api:
         specifier: ^2.2.0
         version: 2.2.0
+      tauri-plugin-user-input-api:
+        specifier: ^0.1.1
+        version: 0.1.1(typescript@5.8.3)
       tesseract.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -745,6 +748,9 @@ packages:
   tauri-plugin-screenshots-api@2.2.0:
     resolution: {integrity: sha512-xNG5yH6kl+Mk/969tFimIxZa6y6eVgarbsEVAJIpERYBlYoNfWCDdI3nW111UOQjWi6zG/RkGjUMLlVy12a3Sg==}
 
+  tauri-plugin-user-input-api@0.1.1:
+    resolution: {integrity: sha512-VBqSo6f9i4A6ivW/rKN/8Quvrw3Mfii+otYMYFcwLsCZ0tph56N4wiG1yfzOuV9636F+bwggONrLvHCWNd09dg==}
+
   tesseract.js-core@7.0.0:
     resolution: {integrity: sha512-WnNH518NzmbSq9zgTPeoF8c+xmilS8rFIl1YKbk/ptuuc7p6cLNELNuPAzcmsYw450ca6bLa8j3t0VAtq435Vw==}
 
@@ -768,6 +774,14 @@ packages:
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
+
+  valibot@1.2.0:
+    resolution: {integrity: sha512-mm1rxUsmOxzrwnX5arGS+U4T25RdvpPjPN4yR0u9pUBov9+zGVtO84tif1eY4r6zWxVxu3KzIyknJy3rxfRZZg==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   vite@7.3.6:
     resolution: {integrity: sha512-4XP60spRGjSZFf1qYH+dJIkK2znL3zQfl9KkOV9MkkRR/3Dls0dxaBsQPTloEc5BLXWPL9vsOxopxyKoMmDueg==}
@@ -1381,6 +1395,13 @@ snapshots:
     dependencies:
       '@tauri-apps/api': 2.11.1
 
+  tauri-plugin-user-input-api@0.1.1(typescript@5.8.3):
+    dependencies:
+      '@tauri-apps/api': 2.11.1
+      valibot: 1.2.0(typescript@5.8.3)
+    transitivePeerDependencies:
+      - typescript
+
   tesseract.js-core@7.0.0: {}
 
   tesseract.js@7.0.0:
@@ -1411,6 +1432,10 @@ snapshots:
       browserslist: 4.28.7
       escalade: 3.2.0
       picocolors: 1.1.1
+
+  valibot@1.2.0(typescript@5.8.3):
+    optionalDependencies:
+      typescript: 5.8.3
 
   vite@7.3.6:
     dependencies:
