@@ -9,9 +9,16 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
+import {
+  setEventTypes,
+  startListening,
+  stopListening,
+} from "tauri-plugin-user-input-api";
+import { invoke } from "@tauri-apps/api/core";
 
 function App() {
-  const [ocr, setOcr] = useState("");
+  const [ocrText, setOcrText] = useState("");
+  const [selectedText, setSelectedText] = useState("");
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -38,17 +45,52 @@ function App() {
     });
   }
 
+  async function listenGlobalMouseEvent() {
+    await setEventTypes(["ButtonRelease"] as any);
+
+    await startListening(async (event) => {
+      console.info(event);
+
+      if ((event.button as any) != "Left") {
+        return;
+      }
+
+      await invoke("get_selected_text");
+    });
+  }
+
   useEffect(() => {
     listen("shortcut-screenshot", () => {
       createScreenshotableWindow();
     });
 
     listen("ocr-completed", (event) => {
-      setOcr(event.payload as string);
+      setOcrText(event.payload as string);
     });
+
+    listen("text-selected", (event) => {
+      console.info(event.payload);
+      setSelectedText(event.payload as string);
+    });
+
+    listenGlobalMouseEvent();
+
+    return () => {
+      stopListening();
+    };
   }, []);
 
-  return <div>{ocr ? <p>Got OCR text: {ocr}</p> : "Ready..."}</div>;
+  return (
+    <div>
+      {ocrText ? (
+        <p>Got OCR text: {ocrText}</p>
+      ) : selectedText ? (
+        <p>Got Selected text: {selectedText}</p>
+      ) : (
+        "Ready..."
+      )}
+    </div>
+  );
 }
 
 export default App;

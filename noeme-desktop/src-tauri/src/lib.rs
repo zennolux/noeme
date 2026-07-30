@@ -1,60 +1,5 @@
 mod commands;
 
-/*
-#[derive(Debug, Deserialize)]
-struct ImageArea {
-    x: f64,
-    y: f64,
-    width: f64,
-    height: f64,
-}
-
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> String {
-    let store = app_handle.store("store.json").unwrap();
-
-    if let Some(path) = store.get("path-screenshot") {
-        let safe_path = path
-            .to_string()
-            .trim()
-            .trim_matches('"')
-            .trim_matches('\\')
-            .trim_matches('"')
-            .to_string();
-
-        //println!("{:#?}", safe_path.clone());
-
-        let mut image = image::open(safe_path).unwrap();
-
-        image = image.crop_imm(
-            image_area.x.round() as u32,
-            image_area.y.round() as u32,
-            image_area.width.round() as u32,
-            image_area.height.round() as u32,
-        );
-
-        image
-            .save(format!(
-                "{}",
-                app_handle
-                    .path()
-                    .app_data_dir()
-                    .unwrap()
-                    .join("screenshot-cropped.png")
-                    .to_str()
-                    .unwrap()
-            ))
-            .expect("Error while save cropped image");
-    }
-
-    format!(
-        "Hello, W:{:#?},H:{:#?},X:{:#?},Y:{:#?}! You've been greeted from Rust!",
-        image_area.width, image_area.height, image_area.x, image_area.y
-    )
-}
-*/
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -85,7 +30,7 @@ pub fn run() {
                         .build(),
                 )?;
 
-                app.global_shortcut().register(shortcut_screenshot)?
+                app.global_shortcut().register(shortcut_screenshot)?;
             }
 
             Ok(())
@@ -93,7 +38,11 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_screenshots::init())
-        .invoke_handler(tauri::generate_handler![commands::crop_image])
+        .plugin(tauri_plugin_user_input::init())
+        .invoke_handler(tauri::generate_handler![
+            commands::crop_image,
+            commands::get_selected_text
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

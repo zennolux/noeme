@@ -15,6 +15,7 @@
     "core:webview:allow-create-webview-window",
     "core:resources:default",
     "core:path:default",
-    "store:default"
+    "store:default",
+    "user-input:default"
   ]
 }

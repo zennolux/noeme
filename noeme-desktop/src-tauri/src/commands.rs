@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_store::StoreExt;
 
 #[derive(Debug, Deserialize)]
@@ -48,5 +48,20 @@ pub fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> String {
         path_cropped
     } else {
         "".to_string()
+    }
+}
+
+#[tauri::command]
+pub fn get_selected_text(app_handle: AppHandle) {
+    println!("triggered");
+
+    match selectic::get_text() {
+        Ok(text) => {
+            println!("{:#?}", text);
+            app_handle.emit("text-selected", text).unwrap()
+        }
+        Err(err) => {
+            println!("{:#?}", err)
+        }
     }
 }
