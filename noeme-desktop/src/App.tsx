@@ -47,7 +47,7 @@ function App() {
   }
 
   async function listenGlobalMouseEvent() {
-    await setEventTypes([EventTypeEnum.KeyRelease]);
+    await setEventTypes([EventTypeEnum.ButtonPress]);
 
     await startListening(async (event) => {
       console.info(event);
