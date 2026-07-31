@@ -9,6 +9,8 @@ import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import {
+  Button,
+  EventTypeEnum,
   setEventTypes,
   startListening,
   stopListening,
@@ -45,12 +47,12 @@ function App() {
   }
 
   async function listenGlobalMouseEvent() {
-    await setEventTypes(["ButtonRelease"] as any);
+    await setEventTypes([EventTypeEnum.KeyRelease]);
 
     await startListening(async (event) => {
       console.info(event);
 
-      if ((event.button as any) != "Left") {
+      if (event.button != Button.Left) {
         return;
       }
 
