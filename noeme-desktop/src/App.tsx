@@ -1,4 +1,3 @@
-//import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import "react-image-crop/dist/ReactCrop.css";
 import {
@@ -55,7 +54,15 @@ function App() {
         return;
       }
 
-      await invoke("get_selected_text");
+      const text = (await invoke("get_selected_text")) as string;
+
+      if (text.length < 1) {
+        return;
+      }
+
+      console.info(text);
+
+      setSelectedText(text);
     });
   }
 
@@ -66,11 +73,6 @@ function App() {
 
     listen("ocr-completed", (event) => {
       setOcrText(event.payload as string);
-    });
-
-    listen("text-selected", (event) => {
-      console.info(event.payload);
-      setSelectedText(event.payload as string);
     });
 
     listenGlobalMouseEvent();
