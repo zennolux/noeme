@@ -73,8 +73,8 @@ function App() {
       createScreenshotableWindow();
     });
 
-    listen("ocr-completed", (event) => {
-      setOcrText(event.payload as string);
+    listen<string>("ocr-completed", (event) => {
+      setOcrText(event.payload);
     });
 
     listenGlobalMouseEvent();
