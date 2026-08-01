@@ -2991,6 +2991,7 @@ dependencies = [
 name = "noeme-desktop"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "image",
  "selectic",
  "serde",

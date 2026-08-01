@@ -1,6 +1,10 @@
+use anyhow::Result;
 use serde::Deserialize;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_store::StoreExt;
+
+mod error;
+use error::CommandError;
 
 #[derive(Debug, Deserialize)]
 pub struct ImageArea {
@@ -11,8 +15,8 @@ pub struct ImageArea {
 }
 
 #[tauri::command]
-pub fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> String {
-    let store = app_handle.store("store.json").unwrap();
+pub fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> Result<String, CommandError> {
+    let store = app_handle.store("store.json")?;
 
     if let Some(path) = store.get("path-screenshot") {
         let safe_path = path
@@ -23,7 +27,7 @@ pub fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> String {
             .trim_matches('"')
             .to_string();
 
-        let mut image = image::open(safe_path).unwrap();
+        let mut image = image::open(safe_path)?;
 
         image = image.crop_imm(
             image_area.x.round() as u32,
@@ -34,20 +38,17 @@ pub fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> String {
 
         let path_cropped = app_handle
             .path()
-            .app_data_dir()
-            .unwrap()
+            .app_data_dir()?
             .join("screenshot-cropped.png")
             .to_str()
             .unwrap()
             .to_owned();
 
-        image
-            .save(format!("{}", path_cropped))
-            .expect("Error while save cropped image");
+        image.save(format!("{}", path_cropped))?;
 
-        path_cropped
+        Ok(path_cropped)
     } else {
-        "".to_string()
+        Err(CommandError("Error happened".to_string()))
     }
 }
 
