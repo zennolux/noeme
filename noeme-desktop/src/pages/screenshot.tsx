@@ -66,29 +66,13 @@ export default function Screenshot() {
   return (
     <div style={{ width: "100%", height: "100%" }}>
       {imgurl ? (
-        <>
-          <ReactCrop crop={crop} onChange={(crop) => setCrop(crop)}>
-            <img ref={imgref} style={{ margin: 0, padding: 0 }} src={imgurl} />
-          </ReactCrop>
-          <button
-            onClick={saveCropedImage}
-            draggable={true}
-            style={{
-              position: "absolute",
-              top: "2rem",
-              left: "50%",
-              transform: "translateX(-50%)",
-              zIndex: 100,
-              width: "10rem",
-              height: "2rem",
-              background: "black",
-              opacity: 0.2,
-              borderRadius: "1rem",
-            }}
-          >
-            保存
-          </button>
-        </>
+        <ReactCrop
+          crop={crop}
+          onChange={(crop) => setCrop(crop)}
+          onComplete={saveCropedImage}
+        >
+          <img ref={imgref} style={{ margin: 0, padding: 0 }} src={imgurl} />
+        </ReactCrop>
       ) : (
         "Loading..."
       )}
