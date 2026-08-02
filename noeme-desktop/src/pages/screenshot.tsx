@@ -11,6 +11,7 @@ export default function Screenshot() {
   const [imgurl, setImgUrl] = useState<string | undefined>();
   const [crop, setCrop] = useState<Crop>();
   const imgref = useRef(null);
+  const currentWindow = getCurrentWebviewWindow();
 
   async function getFullScreenImage() {
     const store = await load("store.json");
@@ -20,7 +21,9 @@ export default function Screenshot() {
   }
 
   async function saveCropedImage() {
-    const win = getCurrentWebviewWindow();
+    if (!crop) {
+      return;
+    }
 
     const { clientWidth, clientHeight, naturalWidth, naturalHeight } =
       imgref.current as unknown as HTMLImageElement;
@@ -31,10 +34,10 @@ export default function Screenshot() {
     ];
 
     const imageArea = {
-      x: crop!.x * scaleX,
-      y: crop!.y * scaleY,
-      width: crop!.width * scaleX,
-      height: crop!.height * scaleY,
+      x: crop.x * scaleX,
+      y: crop.y * scaleY,
+      width: crop.width * scaleX,
+      height: crop.height * scaleY,
     };
 
     const path = (await invoke("crop_image", { imageArea })) as string;
@@ -44,13 +47,20 @@ export default function Screenshot() {
     worker.terminate();
 
     setTimeout(() => {
-      win.emitTo("main", "ocr-completed", data.text);
-      win.close();
+      currentWindow.emitTo("main", "ocr-completed", data.text);
+      currentWindow.close();
     }, 0);
   }
 
   useEffect(() => {
     getFullScreenImage();
+
+    window.addEventListener("keyup", (event) => {
+      if (event.key != "Escape") {
+        return;
+      }
+      currentWindow.close();
+    });
   }, []);
 
   return (
