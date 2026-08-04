@@ -2966,7 +2966,7 @@ dependencies = [
 
 [[package]]
 name = "noeme"
-version = "0.1.7"
+version = "0.1.8"
 dependencies = [
  "reqwest 0.12.28",
  "scraper",
