@@ -1,10 +1,10 @@
-use anyhow::{anyhow, Result};
+use crate::error::{ErrorKind, NoemeError};
 use scraper::{selectable::Selectable, Html, Selector};
 use serde::Serialize;
 use voca_rs::strip::strip_tags;
 
 pub trait Jsonify {
-    fn to_json(&self) -> Result<String>;
+    fn to_json(&self) -> Result<String, NoemeError>;
 }
 
 #[derive(Debug, Serialize)]
@@ -14,7 +14,7 @@ pub struct Pronunciation {
 }
 
 impl Jsonify for Pronunciation {
-    fn to_json(&self) -> Result<String> {
+    fn to_json(&self) -> Result<String, NoemeError> {
         let serialized = serde_json::to_string(&self)?;
 
         Ok(serialized)
@@ -28,7 +28,7 @@ pub struct BasicMeaningItem {
 }
 
 impl Jsonify for Vec<BasicMeaningItem> {
-    fn to_json(&self) -> Result<String> {
+    fn to_json(&self) -> Result<String, NoemeError> {
         let serialized = serde_json::to_string(&self)?;
 
         Ok(serialized)
@@ -48,7 +48,7 @@ pub struct AdvancedMeaningItem {
 }
 
 impl Jsonify for Vec<AdvancedMeaningItem> {
-    fn to_json(&self) -> Result<String> {
+    fn to_json(&self) -> Result<String, NoemeError> {
         let serialized = serde_json::to_string(&self)?;
 
         Ok(serialized)
@@ -63,7 +63,7 @@ pub struct SentenceItem {
 }
 
 impl Jsonify for Vec<SentenceItem> {
-    fn to_json(&self) -> Result<String> {
+    fn to_json(&self) -> Result<String, NoemeError> {
         let serialized = serde_json::to_string(&self)?;
 
         Ok(serialized)
@@ -80,7 +80,7 @@ pub struct Noeme {
 }
 
 impl Jsonify for Noeme {
-    fn to_json(&self) -> Result<String> {
+    fn to_json(&self) -> Result<String, NoemeError> {
         let serialized = serde_json::to_string(&self)?;
 
         Ok(serialized)
@@ -109,7 +109,7 @@ struct Source {
 impl Source {
     const DOMAIN: &str = "https://cn.bing.com";
 
-    async fn load(word: &str) -> Result<Self> {
+    async fn load(word: &str) -> Result<Self, NoemeError> {
         let url = format!("{}/dict/search?mkt=zh-CN&q={}", Self::DOMAIN, word);
         let html = reqwest::get(url).await?.text().await?;
 
@@ -133,11 +133,14 @@ impl Source {
         })
     }
 
-    fn parse_selector(selectors: &str) -> Result<Selector> {
+    fn parse_selector(selectors: &str) -> Result<Selector, NoemeError> {
         if let Ok(selector) = Selector::parse(selectors) {
             Ok(selector)
         } else {
-            Err(anyhow!("Unable to parse selectors {:?}", selectors))
+            Err(NoemeError {
+                kind: ErrorKind::ParseSelectors(selectors.to_string()),
+                message: "Faile to parse selectors".to_string(),
+            })
         }
     }
 
@@ -290,11 +293,14 @@ impl Noeme {
     ///     assert!(noeme.is_ok());
     /// }
     /// ```
-    pub async fn from(word: &str) -> Result<Self> {
+    pub async fn from(word: &str) -> Result<Self, NoemeError> {
         let source = Source::load(word).await?;
 
         if !source.has_results() {
-            return Err(anyhow!("No results found for {:?}.", word));
+            return Err(NoemeError {
+                kind: ErrorKind::NotFound(word.to_string()),
+                message: format!("No results found for {:?}.", word),
+            });
         }
 
         let pronunciation = match source.find_pronunciation() {
