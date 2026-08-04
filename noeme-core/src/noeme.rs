@@ -314,9 +314,9 @@ impl Noeme {
         Ok(Self {
             word: word.to_string(),
             pronunciation,
-            basic_meanings: source.find_basic_meanings().unwrap(),
-            advanced_meanings: source.find_advanced_meanings().unwrap(),
-            sentences: source.find_sentences().unwrap(),
+            basic_meanings: source.find_basic_meanings().unwrap_or_default(),
+            advanced_meanings: source.find_advanced_meanings().unwrap_or_default(),
+            sentences: source.find_sentences().unwrap_or_default(),
         })
     }
 }
