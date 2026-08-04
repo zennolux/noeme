@@ -1,6 +1,6 @@
 [package]
 name = "noeme"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2024"
 
 description = "Deeply explain a given word, including its pronunciation, meanings, and sample sentences."
@@ -14,7 +14,6 @@ documentation = "https://docs.rs/noeme"
 readme = "README.md"
 
 [dependencies]
-anyhow = "1.0.98"
 reqwest = "0.12.22"
 scraper = "0.23.1"
 serde = { version = "1.0.219", features = ["derive"] }
