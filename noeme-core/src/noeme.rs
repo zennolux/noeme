@@ -156,7 +156,9 @@ impl Source {
             .get_text(&self.document, &self.pronunciation_selector)?
             .split("[")
             .last()?
-            .replace("]", "");
+            .replace("]", "")
+            .trim()
+            .to_string();
 
         let audio_url = format!(
             "{}{}",
