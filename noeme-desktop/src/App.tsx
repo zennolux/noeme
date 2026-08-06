@@ -16,10 +16,13 @@ import {
   stopListening,
 } from "tauri-plugin-user-input-api";
 import { invoke } from "@tauri-apps/api/core";
+import { IoVolumeMediumOutline as VolumeIcon } from "react-icons/io5";
+//import { Separator } from "./components/ui/separator";
 
 function App() {
   const [ocrText, setOcrText] = useState("");
   const [selectedText, setSelectedText] = useState("");
+  const [noeme, setNoeme] = useState<Noeme>();
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -56,7 +59,7 @@ function App() {
         return;
       }
 
-      const text = (await invoke("get_selected_text")) as string;
+      const text = await invoke<string>("get_selected_text");
 
       if (text.length < 1) {
         return;
@@ -68,6 +71,12 @@ function App() {
     });
   }
 
+  async function getWordDetails(word: string) {
+    const wordDetails = await invoke<Noeme>("get_word_details", { word });
+
+    setNoeme(wordDetails);
+  }
+
   useEffect(() => {
     listen("shortcut-screenshot", () => {
       createScreenshotableWindow();
@@ -75,6 +84,7 @@ function App() {
 
     listen<string>("ocr-completed", (event) => {
       setOcrText(event.payload);
+      getWordDetails(event.payload);
     });
 
     listenGlobalMouseEvent();
@@ -85,15 +95,27 @@ function App() {
   }, []);
 
   return (
-    <div>
-      {ocrText ? (
-        <p>Got OCR text: {ocrText}</p>
-      ) : selectedText ? (
-        <p>Got Selected text: {selectedText}</p>
+    <main className="bg-black h-full text-gray-400">
+      {noeme ? (
+        <>
+          <header className="h-16 flex flex-col items-center">
+            <h1 className="text-2xl font-bold">{noeme?.word}</h1>
+            <div className="flex gap-2 ">
+              <p className="text-gray-500">
+                US[{noeme?.pronunciation.phonetic_symbol.trim()}]
+              </p>
+              <p className="text-amber-100 hover:text-amber-300">
+                <VolumeIcon className="text-2xl" />
+              </p>
+            </div>
+          </header>
+        </>
       ) : (
-        "Ready..."
+        <div className="h-full flex justify-center items-center">
+          No data yet...
+        </div>
       )}
-    </div>
+    </main>
   );
 }
 

@@ -15,7 +15,8 @@ pub fn run() {
         .plugin(tauri_plugin_user_input::init())
         .invoke_handler(tauri::generate_handler![
             commands::crop_image,
-            commands::get_selected_text
+            commands::get_selected_text,
+            commands::get_word_details
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

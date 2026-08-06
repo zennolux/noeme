@@ -1,4 +1,5 @@
 use anyhow::Result;
+use noeme::Noeme;
 use serde::Deserialize;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_store::StoreExt;
@@ -57,5 +58,13 @@ pub fn get_selected_text() -> String {
     match selectic::get_text() {
         Ok(text) => text,
         Err(_) => "".to_string(),
+    }
+}
+
+#[tauri::command]
+pub async fn get_word_details(word: String) -> Result<Noeme, CommandError> {
+    match Noeme::from(word.as_str().trim()).await {
+        Ok(result) => Ok(result),
+        Err(err) => Err(CommandError(err.message)),
     }
 }
