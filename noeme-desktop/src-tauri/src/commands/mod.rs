@@ -64,7 +64,11 @@ pub fn get_selected_text() -> String {
 #[tauri::command]
 pub async fn get_word_details(word: String) -> Result<Noeme, CommandError> {
     match Noeme::from(word.as_str().trim()).await {
-        Ok(result) => Ok(result),
+        Ok(result) => {
+            println!("{:#?}", result);
+
+            Ok(result)
+        }
         Err(err) => Err(CommandError(err.message)),
     }
 }
