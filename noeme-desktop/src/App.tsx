@@ -1,4 +1,4 @@
-import "./App.css";
+import "./index.css";
 import "react-image-crop/dist/ReactCrop.css";
 import {
   getMonitorScreenshot,
