@@ -1,6 +1,6 @@
 [package]
 name = "noeme"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2024"
 
 description = "Deeply explain a given word, including its pronunciation, meanings, and sample sentences."
