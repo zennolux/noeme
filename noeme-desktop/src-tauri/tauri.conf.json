@@ -13,11 +13,11 @@
     "windows": [
       {
         "title": "noeme",
-        "width": 400,
         "decorations": false,
         "transparent": true,
         "alwaysOnTop": true,
-        "resizable": false
+        "resizable": false,
+        "visible": false
       }
     ],
     "security": {
