@@ -29,9 +29,7 @@ selectic = "0.1.0"
 tauri-plugin-user-input = "0.1.1"
 anyhow = "1.0.104"
 noeme = { path = "../../noeme-core" }
-tokio = { version = "1.53.1", features = ["full"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"
-tauri-plugin-positioner = "2"
-
+tauri-plugin-window-state = "2"

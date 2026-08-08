@@ -17,6 +17,7 @@
     "core:resources:default",
     "core:path:default",
     "store:default",
-    "user-input:default"
+    "user-input:default",
+    "window-state:default"
   ]
 }

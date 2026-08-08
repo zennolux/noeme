@@ -12,11 +12,14 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "noeme",
+        "width": 400,
+        "height": 600,
         "decorations": false,
         "transparent": true,
         "alwaysOnTop": true,
-        "resizable": false,
+        "resizable": true,
         "visible": false
       }
     ],

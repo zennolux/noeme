@@ -47,6 +47,7 @@ function App() {
     });
   }
 
+  //@ts-ignore
   async function listenGlobalMouseEvent() {
     await setEventTypes([EventTypeEnum.ButtonPress]);
 
@@ -84,7 +85,7 @@ function App() {
       getWordDetails(event.payload);
     });
 
-    listenGlobalMouseEvent();
+    //listenGlobalMouseEvent();
 
     return () => {
       stopListening();
