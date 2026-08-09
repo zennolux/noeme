@@ -77,11 +77,11 @@ function App() {
   }
 
   useEffect(() => {
-    listen("shortcut-screenshot", () => {
+    const unlistenScreenshot = listen("shortcut-screenshot", () => {
       createScreenshotableWindow();
     });
 
-    listen<string>("ocr-completed", (event) => {
+    const unlistenOcr = listen<string>("ocr-completed", (event) => {
       getWordDetails(event.payload);
     });
 
@@ -89,6 +89,8 @@ function App() {
 
     return () => {
       stopListening();
+      unlistenScreenshot.then((fn) => fn());
+      unlistenOcr.then((fn) => fn());
     };
   }, []);
 
