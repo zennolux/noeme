@@ -21,8 +21,8 @@ import { Separator } from "./components/ui/separator";
 import Typed from "typed.js";
 
 function App() {
-  const [noeme, setNoeme] = useState<Noeme>();
   const wordEl = useRef(null);
+  const [noeme, setNoeme] = useState<Noeme>();
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -57,7 +57,6 @@ function App() {
       fadeOut: true,
       smartBackspace: false,
       loop: true,
-      loopCount: 10,
       cursorChar: "",
     });
   }
