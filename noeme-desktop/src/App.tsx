@@ -6,7 +6,7 @@ import {
 } from "tauri-plugin-screenshots-api";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import {
   Button,
@@ -18,9 +18,11 @@ import {
 import { invoke } from "@tauri-apps/api/core";
 import { IoVolumeMediumOutline as VolumeIcon } from "react-icons/io5";
 import { Separator } from "./components/ui/separator";
+import Typed from "typed.js";
 
 function App() {
   const [noeme, setNoeme] = useState<Noeme>();
+  const wordEl = useRef(null);
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -44,6 +46,19 @@ function App() {
 
     webview.once("tauri://error", (e) => {
       console.info(e);
+    });
+  }
+
+  function spell(word: string) {
+    new Typed(wordEl.current, {
+      strings: [word],
+      typeSpeed: 300,
+      backSpeed: 0,
+      fadeOut: true,
+      smartBackspace: false,
+      loop: true,
+      loopCount: 10,
+      cursorChar: "",
     });
   }
 
@@ -89,7 +104,9 @@ function App() {
 
     return () => {
       stopListening();
+
       unlistenScreenshot.then((fn) => fn());
+
       unlistenOcr.then((fn) => fn());
     };
   }, []);
@@ -106,13 +123,22 @@ function App() {
               data-tauri-drag-region
               className="select-none h-16 flex flex-col items-center"
             >
-              <h1 className="text-2xl font-bold">{noeme?.word}</h1>
-              <div className="flex gap-2 ">
+              <h1
+                ref={wordEl}
+                className="flex-1 text-2xl font-bold hover:text-amber-300"
+                onClick={() => spell(noeme.word)}
+              >
+                {noeme?.word}
+              </h1>
+              <div className="flex-1 flex gap-2 ">
                 <p className="text-gray-500">
                   US[{noeme?.pronunciation.phonetic_symbol}]
                 </p>
                 <p className="text-amber-100 hover:text-amber-300">
-                  <VolumeIcon className="text-2xl" />
+                  <VolumeIcon
+                    className="text-2xl"
+                    onClick={() => spell(noeme.word)}
+                  />
                 </p>
               </div>
             </header>
