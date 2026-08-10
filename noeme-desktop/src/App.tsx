@@ -57,8 +57,14 @@ function App() {
       fadeOut: true,
       smartBackspace: false,
       loop: true,
+      loopCount: 3,
       cursorChar: "",
     });
+  }
+
+  function pronounce(url: string) {
+    const audio = new Audio(url);
+    audio.play();
   }
 
   //@ts-ignore
@@ -114,7 +120,7 @@ function App() {
     <div data-tauri-drag-region className="h-full bg-black select-none">
       <div
         data-tauri-drag-region
-        className="h-full select-none bg-white/5 backdrop-blur-md border border-white/20 shadow-2xl text-gray-400"
+        className="h-full select-none backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
       >
         {noeme ? (
           <>
@@ -131,12 +137,12 @@ function App() {
               </h1>
               <div className="flex-1 flex gap-2 ">
                 <p className="text-gray-500">
-                  US[{noeme?.pronunciation.phonetic_symbol}]
+                  [{noeme?.pronunciation.phonetic_symbol}]
                 </p>
                 <p className="text-amber-100 hover:text-amber-300">
                   <VolumeIcon
                     className="text-2xl"
-                    onClick={() => spell(noeme.word)}
+                    onClick={() => pronounce(noeme.pronunciation.audio_url)}
                   />
                 </p>
               </div>
