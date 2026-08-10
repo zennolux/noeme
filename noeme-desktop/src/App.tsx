@@ -19,6 +19,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { IoVolumeMediumOutline as VolumeIcon } from "react-icons/io5";
 import { Separator } from "./components/ui/separator";
 import Typed from "typed.js";
+import { ScrollArea } from "./components/ui/scroll-area";
 
 function App() {
   const wordEl = useRef(null);
@@ -148,6 +149,19 @@ function App() {
               </div>
             </header>
             <Separator className="bg-gray-800" />
+            <main className="mx-2">
+              <ScrollArea className="h-[80%]">
+                <h2 className="font-bold mt-2 text-gray-400">基本释义</h2>
+                {noeme.basic_meanings.map((item) => (
+                  <dl className="flex items-center gap-2 mt-2">
+                    <dt className="w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
+                      {item.attr}
+                    </dt>
+                    <dd>{item.value}</dd>
+                  </dl>
+                ))}
+              </ScrollArea>
+            </main>
           </>
         ) : (
           <div className="data-tauri-drag-region h-full flex justify-center items-center">
