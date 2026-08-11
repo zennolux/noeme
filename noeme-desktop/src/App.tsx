@@ -148,9 +148,9 @@ function App() {
                 </p>
               </div>
             </header>
-            <Separator className="bg-gray-800" />
-            <main className="h-[88%] mx-2">
-              <ScrollArea className="h-[100%]">
+            <Separator className="bg-gray-700" />
+            <main className="h-[84%]">
+              <ScrollArea className="h-[100%] px-3">
                 <div className="mt-2">
                   <h2 className="font-bold text-gray-400">Basic meanings</h2>
                   {noeme.basic_meanings.map((item) => (
@@ -172,21 +172,49 @@ function App() {
                       <p className=" w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
                         {item.attr}
                       </p>
-                      {item.values.map((item, index) => (
-                        <dl
-                          key={index}
-                          className="flex items-center gap-4 mt-2"
-                        >
-                          <dt className="text-gray-500 font-bold">
-                            {index + 1}.
-                          </dt>
-                          <dd>
-                            <p>{item.en}</p>
-                            <p>{item.cn}</p>
-                          </dd>
-                        </dl>
+                      {item.values.map((value, index) => (
+                        <>
+                          <dl
+                            key={index}
+                            className="flex items-center gap-4 mt-2"
+                          >
+                            <dt className="text-gray-500 font-bold">
+                              {index + 1}.
+                            </dt>
+                            <dd>
+                              <p>{value.en}</p>
+                              <p className="mt-2">{value.cn}</p>
+                            </dd>
+                          </dl>
+                          {index < item.values.length - 1 ? (
+                            <Separator className="mt-2 bg-gray-800" />
+                          ) : (
+                            ""
+                          )}
+                        </>
                       ))}
                     </div>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <h2>Sample sentences</h2>
+                  {noeme.sentences.map((item, index) => (
+                    <>
+                      <dl key={index} className="flex items-center gap-4 mt-2">
+                        <dt className="text-gray-500 font-bold">
+                          {index + 1}.
+                        </dt>
+                        <dd>
+                          <p>{item.en}</p>
+                          <p className="mt-2">{item.cn}</p>
+                        </dd>
+                      </dl>
+                      {index < noeme.sentences.length - 1 ? (
+                        <Separator className="mt-2 bg-gray-800" />
+                      ) : (
+                        ""
+                      )}
+                    </>
                   ))}
                 </div>
               </ScrollArea>
