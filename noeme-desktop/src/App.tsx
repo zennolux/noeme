@@ -16,14 +16,20 @@ import {
   stopListening,
 } from "tauri-plugin-user-input-api";
 import { invoke } from "@tauri-apps/api/core";
-import { IoVolumeMediumOutline as VolumeIcon } from "react-icons/io5";
+import { IoVolumeMediumOutline as IconVolume } from "react-icons/io5";
+import { VscRunBelow as IconBelow } from "react-icons/vsc";
 import { Separator } from "./components/ui/separator";
 import Typed from "typed.js";
 import { ScrollArea } from "./components/ui/scroll-area";
+import parse from "html-react-parser";
 
 function App() {
   const wordEl = useRef(null);
   const [noeme, setNoeme] = useState<Noeme>();
+  const [playing, setPlaying] = useState<{ [key: number]: boolean }>();
+  const [showPlayingIcon, setShowPlayingIcon] = useState<{
+    [key: number]: boolean;
+  }>();
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -63,9 +69,23 @@ function App() {
     });
   }
 
-  function pronounce(url: string) {
+  function pronounce(
+    url: string,
+    onPlaying: Function | undefined = undefined,
+    onEnded: Function | undefined = undefined
+  ) {
     const audio = new Audio(url);
     audio.play();
+
+    onPlaying &&
+      audio.addEventListener("playing", () => {
+        onPlaying();
+      });
+
+    onEnded &&
+      audio.addEventListener("ended", () => {
+        onEnded();
+      });
   }
 
   //@ts-ignore
@@ -131,17 +151,21 @@ function App() {
             >
               <h1
                 ref={wordEl}
-                className="flex-1 text-2xl font-bold hover:text-amber-300"
+                className="flex-1 text-2xl font-bold hover:text-amber-100"
                 onClick={() => spell(noeme.word)}
               >
                 {noeme?.word}
               </h1>
               <div className="flex-1 flex gap-2 ">
-                <p className="text-gray-500">
-                  [{noeme?.pronunciation.phonetic_symbol}]
+                <p>
+                  /
+                  <i className="text-gray-500">
+                    {noeme?.pronunciation.phonetic_symbol}
+                  </i>
+                  /
                 </p>
                 <p className="text-amber-100 hover:text-amber-300">
-                  <VolumeIcon
+                  <IconVolume
                     className="text-2xl"
                     onClick={() => pronounce(noeme.pronunciation.audio_url)}
                   />
@@ -152,7 +176,10 @@ function App() {
             <main className="h-[84%]">
               <ScrollArea className="h-[100%] px-3">
                 <div className="mt-2">
-                  <h2 className="font-bold text-gray-400">Basic meanings</h2>
+                  <div className="flex items-center gap-2">
+                    <IconBelow className="text-amber-100" />
+                    <h2 className="font-bold text-blue-200">Basic meanings</h2>
+                  </div>
                   {noeme.basic_meanings.map((item) => (
                     <dl
                       key={item.attr}
@@ -161,27 +188,29 @@ function App() {
                       <dt className="w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
                         {item.attr}
                       </dt>
-                      <dd>{item.value}</dd>
+                      <dd className="w-[90%]">{item.value}</dd>
                     </dl>
                   ))}
                 </div>
                 <div className="mt-4">
-                  <h2 className="font-bold text-gray-400">Advanced meanings</h2>
+                  <div className="flex items-center gap-2">
+                    <IconBelow className="text-amber-100" />
+                    <h2 className="font-bold text-blue-200">
+                      Advanced meanings
+                    </h2>
+                  </div>
                   {noeme.advanced_meanings.map((item) => (
                     <div key={item.attr} className="mt-2">
                       <p className=" w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
                         {item.attr}
                       </p>
                       {item.values.map((value, index) => (
-                        <>
-                          <dl
-                            key={index}
-                            className="flex items-center gap-4 mt-2"
-                          >
-                            <dt className="text-gray-500 font-bold">
+                        <div key={index}>
+                          <dl className="flex items-center gap-4 mt-2">
+                            <dt className="w-[5%] text-blue-200 font-bold">
                               {index + 1}.
                             </dt>
-                            <dd>
+                            <dd className="w-[95%]">
                               <p>{value.en}</p>
                               <p className="mt-2">{value.cn}</p>
                             </dd>
@@ -191,21 +220,71 @@ function App() {
                           ) : (
                             ""
                           )}
-                        </>
+                        </div>
                       ))}
                     </div>
                   ))}
                 </div>
                 <div className="mt-4">
-                  <h2>Sample sentences</h2>
+                  <div className="flex items-center gap-2">
+                    <IconBelow className="text-amber-100" />
+
+                    <h2 className="font-bold text-blue-200">
+                      Sample sentences
+                    </h2>
+                  </div>
                   {noeme.sentences.map((item, index) => (
-                    <>
-                      <dl key={index} className="flex items-center gap-4 mt-2">
-                        <dt className="text-gray-500 font-bold">
+                    <div key={index}>
+                      <dl className="flex items-center gap-4 mt-2">
+                        <dt className="w-[5%] text-blue-200 font-bold">
                           {index + 1}.
                         </dt>
-                        <dd>
-                          <p>{item.en}</p>
+                        <dd className="w-[95%]">
+                          <p
+                            className={`${
+                              (showPlayingIcon && showPlayingIcon[index]) ||
+                              (playing && playing[index])
+                                ? "bg-gray-900 opacity-80"
+                                : ""
+                            } relative`}
+                            onMouseOver={() =>
+                              setShowPlayingIcon({ [index]: true })
+                            }
+                            onMouseLeave={() => {
+                              if (!playing || !playing[index]) {
+                                setShowPlayingIcon({ [index]: false });
+                              }
+                            }}
+                          >
+                            {parse(
+                              item.en.replace(
+                                noeme.word,
+                                `<i className="underline underline-offset-4 text-amber-100">${noeme.word}</i>`
+                              )
+                            )}
+                            {showPlayingIcon && showPlayingIcon[index] ? (
+                              <IconVolume
+                                className={`text-3xl text-amber-100 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
+                                  playing && playing[index]
+                                    ? "animate-ping"
+                                    : ""
+                                }`}
+                                onClick={() => {
+                                  setPlaying({ [index]: true });
+                                  pronounce(
+                                    item.audio_url,
+                                    () => setPlaying({ [index]: true }),
+                                    () => {
+                                      setShowPlayingIcon({ [index]: false });
+                                      setPlaying({ [index]: false });
+                                    }
+                                  );
+                                }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                          </p>
                           <p className="mt-2">{item.cn}</p>
                         </dd>
                       </dl>
@@ -214,7 +293,7 @@ function App() {
                       ) : (
                         ""
                       )}
-                    </>
+                    </div>
                   ))}
                 </div>
               </ScrollArea>
