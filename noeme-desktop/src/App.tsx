@@ -127,7 +127,7 @@ function App() {
           <>
             <header
               data-tauri-drag-region
-              className="select-none h-16 flex flex-col items-center"
+              className="select-none h-[8%] flex flex-col items-center"
             >
               <h1
                 ref={wordEl}
@@ -149,17 +149,46 @@ function App() {
               </div>
             </header>
             <Separator className="bg-gray-800" />
-            <main className="mx-2">
-              <ScrollArea className="h-[80%]">
-                <h2 className="font-bold mt-2 text-gray-400">基本释义</h2>
-                {noeme.basic_meanings.map((item) => (
-                  <dl className="flex items-center gap-2 mt-2">
-                    <dt className="w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
-                      {item.attr}
-                    </dt>
-                    <dd>{item.value}</dd>
-                  </dl>
-                ))}
+            <main className="h-[88%] mx-2">
+              <ScrollArea className="h-[100%]">
+                <div className="mt-2">
+                  <h2 className="font-bold text-gray-400">Basic meanings</h2>
+                  {noeme.basic_meanings.map((item) => (
+                    <dl
+                      key={item.attr}
+                      className="flex items-center gap-2 mt-2"
+                    >
+                      <dt className="w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
+                        {item.attr}
+                      </dt>
+                      <dd>{item.value}</dd>
+                    </dl>
+                  ))}
+                </div>
+                <div className="mt-4">
+                  <h2 className="font-bold text-gray-400">Advanced meanings</h2>
+                  {noeme.advanced_meanings.map((item) => (
+                    <div key={item.attr} className="mt-2">
+                      <p className=" w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
+                        {item.attr}
+                      </p>
+                      {item.values.map((item, index) => (
+                        <dl
+                          key={index}
+                          className="flex items-center gap-4 mt-2"
+                        >
+                          <dt className="text-gray-500 font-bold">
+                            {index + 1}.
+                          </dt>
+                          <dd>
+                            <p>{item.en}</p>
+                            <p>{item.cn}</p>
+                          </dd>
+                        </dl>
+                      ))}
+                    </div>
+                  ))}
+                </div>
               </ScrollArea>
             </main>
           </>
