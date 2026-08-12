@@ -18,17 +18,17 @@ import {
   stopListening,
 } from "tauri-plugin-user-input-api";
 import { invoke } from "@tauri-apps/api/core";
+import { IoIosCloseCircleOutline as IconClose } from "react-icons/io";
 import { IoVolumeMediumOutline as IconVolume } from "react-icons/io5";
-import {
-  VscRunBelow as IconBelow,
-  VscRightPanelHide as IconHide,
-} from "react-icons/vsc";
+import { BiHide as IconHide } from "react-icons/bi";
+import { VscRunBelow as IconBelow } from "react-icons/vsc";
 import { Separator } from "./components/ui/separator";
 import Typed from "typed.js";
 import { ScrollArea } from "./components/ui/scroll-area";
 import parse from "html-react-parser";
 import { Skeleton } from "./components/ui/skeleton";
 import { Kbd, KbdGroup } from "./components/ui/kbd";
+import { name, version } from "../package.json";
 
 function App() {
   const win = getCurrentWebviewWindow();
@@ -98,8 +98,6 @@ function App() {
     await setEventTypes([EventTypeEnum.ButtonPress]);
 
     await startListening(async (event) => {
-      console.info(event);
-
       if (event.button != Button.Left) {
         return;
       }
@@ -109,8 +107,6 @@ function App() {
       if (text.length < 1) {
         return;
       }
-
-      console.info(text);
 
       getWordDetails(text);
     });
@@ -152,6 +148,20 @@ function App() {
         data-tauri-drag-region
         className="h-full select-none backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
       >
+        <div className="absolute -top-[0.15rem] -right-[0.15rem]">
+          <div className="flex gap-2">
+            <IconHide
+              className="text-2xl text-gray-500 hover:text-amber-100"
+              title="Hide the window"
+              onClick={() => win.hide()}
+            />
+            <IconClose
+              title="Close the window"
+              className="text-2xl text-gray-500 hover:text-amber-100"
+              onClick={() => win.close()}
+            />
+          </div>
+        </div>
         {noeme ? (
           <>
             <header
@@ -334,7 +344,10 @@ function App() {
             </main>
           </div>
         ) : (
-          <div className="h-full flex flex-col justify-center gap-4 px-4">
+          <div
+            data-tauri-drag-region
+            className="h-full flex flex-col justify-center gap-4 px-4"
+          >
             <h1 className="font-bold">
               Get started via the following two ways:
             </h1>
@@ -359,11 +372,15 @@ function App() {
           </div>
         )}
         <footer className="absolute bottom-[2%] left-1/2 -translate-x-1/2">
-          <IconHide
-            className="text-2xl"
-            title="Hide the window"
-            onClick={() => win.hide()}
-          />
+          <a
+            title="Visit offical website"
+            href="https://github.com/zennolux/noeme"
+            target="_blank"
+            className="underline underline-offset-4 text-gray-500 hover:text-amber-100"
+          >
+            {" "}
+            {`${name} v${version}`}
+          </a>
         </footer>
       </div>
     </div>
