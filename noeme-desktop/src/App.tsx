@@ -115,6 +115,7 @@ function App() {
   }
 
   async function getWordDetails(word: string) {
+    setNoeme(undefined);
     setLoading(true);
 
     const wordDetails = await invoke<Noeme>("get_word_details", { word });
@@ -181,126 +182,134 @@ function App() {
             <Separator className="bg-gray-700" />
             <main className="h-[84%]">
               <ScrollArea className="h-[100%] px-3">
-                <div className="mt-2">
-                  <div className="flex items-center gap-2">
-                    <IconBelow className="text-amber-100" />
-                    <h2 className="font-bold text-blue-200">Basic meanings</h2>
-                  </div>
-                  {noeme.basic_meanings.map((item) => (
-                    <dl
-                      key={item.attr}
-                      className="flex items-center gap-2 mt-2"
-                    >
-                      <dt className="w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
-                        {item.attr}
-                      </dt>
-                      <dd className="w-[90%]">{item.value}</dd>
-                    </dl>
-                  ))}
-                </div>
-                <div className="mt-4">
-                  <div className="flex items-center gap-2">
-                    <IconBelow className="text-amber-100" />
-                    <h2 className="font-bold text-blue-200">
-                      Advanced meanings
-                    </h2>
-                  </div>
-                  {noeme.advanced_meanings.map((item) => (
-                    <div key={item.attr} className="mt-2">
-                      <p className=" w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
-                        {item.attr}
-                      </p>
-                      {item.values.map((value, index) => (
-                        <div key={index}>
-                          <dl className="flex items-center gap-4 mt-2">
-                            <dt className="w-[5%] text-blue-200 font-bold">
-                              {index + 1}.
-                            </dt>
-                            <dd className="w-[95%]">
-                              <p>{value.en}</p>
-                              <p className="mt-2">{value.cn}</p>
-                            </dd>
-                          </dl>
-                          {index < item.values.length - 1 ? (
-                            <Separator className="mt-2 bg-gray-800" />
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      ))}
+                {noeme.basic_meanings?.length > 0 && (
+                  <div className="mt-2">
+                    <div className="flex items-center gap-2">
+                      <IconBelow className="text-amber-100" />
+                      <h2 className="font-bold text-blue-200">
+                        Basic meanings
+                      </h2>
                     </div>
-                  ))}
-                </div>
-                <div className="mt-4">
-                  <div className="flex items-center gap-2">
-                    <IconBelow className="text-amber-100" />
-
-                    <h2 className="font-bold text-blue-200">
-                      Sample sentences
-                    </h2>
-                  </div>
-                  {noeme.sentences.map((item, index) => (
-                    <div key={index}>
-                      <dl className="flex items-center gap-4 mt-2">
-                        <dt className="w-[5%] text-blue-200 font-bold">
-                          {index + 1}.
+                    {noeme.basic_meanings.map((item) => (
+                      <dl
+                        key={item.attr}
+                        className="flex items-center gap-2 mt-2"
+                      >
+                        <dt className="w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
+                          {item.attr}
                         </dt>
-                        <dd className="w-[95%]">
-                          <p
-                            className={`${
-                              (showPlayingIcon && showPlayingIcon[index]) ||
-                              (playing && playing[index])
-                                ? "bg-gray-900 opacity-80"
-                                : ""
-                            } relative`}
-                            onMouseOver={() =>
-                              setShowPlayingIcon({ [index]: true })
-                            }
-                            onMouseLeave={() => {
-                              if (!playing || !playing[index]) {
-                                setShowPlayingIcon({ [index]: false });
-                              }
-                            }}
-                          >
-                            {parse(
-                              item.en.replace(
-                                noeme.word,
-                                `<i className="underline underline-offset-4 text-amber-100">${noeme.word}</i>`
-                              )
-                            )}
-                            {showPlayingIcon && showPlayingIcon[index] ? (
-                              <IconVolume
-                                className={`text-2xl text-amber-100 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
-                                  playing && playing[index]
-                                    ? "animate-ping"
-                                    : ""
-                                }`}
-                                onClick={() => {
-                                  pronounce(
-                                    item.audio_url,
-                                    () => setPlaying({ [index]: true }),
-                                    () => {
-                                      setShowPlayingIcon({ [index]: false });
-                                      setPlaying({ [index]: false });
-                                    }
-                                  );
-                                }}
-                              />
-                            ) : (
-                              ""
-                            )}
-                          </p>
-                          <p className="mt-2">{item.cn}</p>
-                        </dd>
+                        <dd className="w-[90%]">{item.value}</dd>
                       </dl>
-                      {index < noeme.sentences.length - 1 ? (
-                        <Separator className="mt-2 bg-gray-800" />
-                      ) : (
-                        ""
-                      )}
+                    ))}
+                  </div>
+                )}
+                {noeme.advanced_meanings?.length > 0 && (
+                  <div className="mt-4">
+                    <div className="flex items-center gap-2">
+                      <IconBelow className="text-amber-100" />
+                      <h2 className="font-bold text-blue-200">
+                        Advanced meanings
+                      </h2>
                     </div>
-                  ))}
-                </div>
+                    {noeme.advanced_meanings.map((item) => (
+                      <div key={item.attr} className="mt-2">
+                        <p className=" w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
+                          {item.attr}
+                        </p>
+                        {item.values.map((value, index) => (
+                          <div key={index}>
+                            <dl className="flex items-center gap-4 mt-2">
+                              <dt className="w-[5%] text-blue-200 font-bold">
+                                {index + 1}.
+                              </dt>
+                              <dd className="w-[95%]">
+                                <p>{value.en}</p>
+                                <p className="mt-2">{value.cn}</p>
+                              </dd>
+                            </dl>
+                            {index < item.values.length - 1 && (
+                              <Separator className="mt-2 bg-gray-800" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {noeme.sentences?.length > 0 && (
+                  <div className="mt-4">
+                    <div className="flex items-center gap-2">
+                      <IconBelow className="text-amber-100" />
+
+                      <h2 className="font-bold text-blue-200">
+                        Sample sentences
+                      </h2>
+                    </div>
+                    {noeme.sentences.map((item, index) => (
+                      <div key={index}>
+                        <dl className="flex items-center gap-4 mt-2">
+                          <dt className="w-[5%] text-blue-200 font-bold">
+                            {index + 1}.
+                          </dt>
+                          <dd className="w-[95%]">
+                            <p
+                              className={`${
+                                (showPlayingIcon && showPlayingIcon[index]) ||
+                                (playing &&
+                                  playing[index] &&
+                                  "bg-gray-900 opacity-80")
+                              } relative`}
+                              onMouseOver={() =>
+                                setShowPlayingIcon({ [index]: true })
+                              }
+                              onMouseLeave={() => {
+                                if (!playing || !playing[index]) {
+                                  setShowPlayingIcon({ [index]: false });
+                                }
+                              }}
+                            >
+                              {parse(
+                                item.en.replace(
+                                  new RegExp(
+                                    `(${
+                                      noeme.word
+                                    }|${noeme.word.toUpperCase()}|${
+                                      noeme.word.charAt(0).toUpperCase() +
+                                      noeme.word.slice(1)
+                                    })`,
+                                    "g"
+                                  ),
+                                  `<i className="underline underline-offset-4 text-amber-100">$1</i>`
+                                )
+                              )}
+                              {showPlayingIcon && showPlayingIcon[index] && (
+                                <IconVolume
+                                  className={`text-2xl text-amber-100 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
+                                    playing && playing[index] && "animate-ping"
+                                  }`}
+                                  onClick={() => {
+                                    pronounce(
+                                      item.audio_url,
+                                      () => setPlaying({ [index]: true }),
+                                      () => {
+                                        setShowPlayingIcon({ [index]: false });
+                                        setPlaying({ [index]: false });
+                                      }
+                                    );
+                                  }}
+                                />
+                              )}
+                            </p>
+                            <p className="mt-2">{item.cn}</p>
+                          </dd>
+                        </dl>
+                        {index < noeme.sentences.length - 1 && (
+                          <Separator className="mt-2 bg-gray-800" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </main>
           </>
