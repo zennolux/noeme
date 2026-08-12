@@ -1,10 +1,10 @@
+import "react-image-crop/dist/ReactCrop.css";
 import { useRef } from "react";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import ReactCrop, { type Crop } from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
 import { createWorker } from "tesseract.js";
 
 export default function Screenshot() {
