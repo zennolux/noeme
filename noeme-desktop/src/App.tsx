@@ -1,10 +1,12 @@
 import "./index.css";
-import "react-image-crop/dist/ReactCrop.css";
 import {
   getMonitorScreenshot,
   getScreenshotableMonitors,
 } from "tauri-plugin-screenshots-api";
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import {
+  WebviewWindow,
+  getCurrentWebviewWindow,
+} from "@tauri-apps/api/webviewWindow";
 import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
@@ -17,7 +19,10 @@ import {
 } from "tauri-plugin-user-input-api";
 import { invoke } from "@tauri-apps/api/core";
 import { IoVolumeMediumOutline as IconVolume } from "react-icons/io5";
-import { VscRunBelow as IconBelow } from "react-icons/vsc";
+import {
+  VscRunBelow as IconBelow,
+  VscRightPanelHide as IconHide,
+} from "react-icons/vsc";
 import { Separator } from "./components/ui/separator";
 import Typed from "typed.js";
 import { ScrollArea } from "./components/ui/scroll-area";
@@ -26,6 +31,7 @@ import { Skeleton } from "./components/ui/skeleton";
 import { Kbd, KbdGroup } from "./components/ui/kbd";
 
 function App() {
+  const win = getCurrentWebviewWindow();
   const wordEl = useRef(null);
   const [noeme, setNoeme] = useState<Noeme>();
   const [loading, setLoading] = useState(false);
@@ -42,7 +48,7 @@ function App() {
     await store.set("path-screenshot", path);
     await store.save();
 
-    const webview = new WebviewWindow("screenshot", {
+    new WebviewWindow("screenshot", {
       title: "noeme-screenshot",
       url: "/screenshot",
       visible: true,
@@ -52,10 +58,6 @@ function App() {
       resizable: false,
       alwaysOnTop: true,
       devtools: true,
-    });
-
-    webview.once("tauri://error", (e) => {
-      console.info(e);
     });
   }
 
@@ -255,9 +257,9 @@ function App() {
                             <p
                               className={`${
                                 (showPlayingIcon && showPlayingIcon[index]) ||
-                                (playing &&
-                                  playing[index] &&
-                                  "bg-gray-900 opacity-80")
+                                (playing && playing[index])
+                                  ? "bg-gray-700 opacity-90"
+                                  : ""
                               } relative`}
                               onMouseOver={() =>
                                 setShowPlayingIcon({ [index]: true })
@@ -356,6 +358,13 @@ function App() {
             </div>
           </div>
         )}
+        <footer className="absolute bottom-[2%] left-1/2 -translate-x-1/2">
+          <IconHide
+            className="text-2xl"
+            title="Hide the window"
+            onClick={() => win.hide()}
+          />
+        </footer>
       </div>
     </div>
   );
