@@ -47,7 +47,11 @@ export default function Screenshot() {
     worker.terminate();
 
     setTimeout(() => {
-      currentWindow.emitTo("main", "ocr-completed", data.text);
+      currentWindow.emitTo(
+        "main",
+        "ocr-completed",
+        data.text.replace(/[^a-zA-Z ]/g, "")
+      );
       currentWindow.close();
     }, 0);
   }
