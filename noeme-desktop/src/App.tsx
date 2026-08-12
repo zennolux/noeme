@@ -22,10 +22,13 @@ import { Separator } from "./components/ui/separator";
 import Typed from "typed.js";
 import { ScrollArea } from "./components/ui/scroll-area";
 import parse from "html-react-parser";
+import { Skeleton } from "./components/ui/skeleton";
+import { Kbd, KbdGroup } from "./components/ui/kbd";
 
 function App() {
   const wordEl = useRef(null);
   const [noeme, setNoeme] = useState<Noeme>();
+  const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState<{ [key: number]: boolean }>();
   const [showPlayingIcon, setShowPlayingIcon] = useState<{
     [key: number]: boolean;
@@ -112,9 +115,12 @@ function App() {
   }
 
   async function getWordDetails(word: string) {
+    setLoading(true);
+
     const wordDetails = await invoke<Noeme>("get_word_details", { word });
 
     setNoeme(wordDetails);
+    setTimeout(() => setLoading(false), 0);
   }
 
   useEffect(() => {
@@ -264,13 +270,12 @@ function App() {
                             )}
                             {showPlayingIcon && showPlayingIcon[index] ? (
                               <IconVolume
-                                className={`text-3xl text-amber-100 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
+                                className={`text-2xl text-amber-100 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
                                   playing && playing[index]
                                     ? "animate-ping"
                                     : ""
                                 }`}
                                 onClick={() => {
-                                  setPlaying({ [index]: true });
                                   pronounce(
                                     item.audio_url,
                                     () => setPlaying({ [index]: true }),
@@ -299,9 +304,47 @@ function App() {
               </ScrollArea>
             </main>
           </>
+        ) : loading ? (
+          <div data-tauri-drag-region className="h-full">
+            <header
+              data-tauri-drag-region
+              className="h-[8%] w-full flex flex-col justify-center items-center gap-4 select-none"
+            >
+              <Skeleton className="bg-gray-800 h-4 w-3/12" />
+              <Skeleton className="bg-gray-800 h-4 w-3/6" />
+            </header>
+            <main
+              data-tauri-drag-region
+              className="h-[84%] w-full flex flex-col justify-center items-center gap-4"
+            >
+              {Array.from({ length: 20 }, (_, i) => i).map((_) => (
+                <Skeleton className="bg-gray-800 h-4 w-11/12" />
+              ))}
+            </main>
+          </div>
         ) : (
-          <div className="data-tauri-drag-region h-full flex justify-center items-center">
-            No data yet...
+          <div className="h-full flex flex-col justify-center gap-4 px-4">
+            <h1 className="font-bold">
+              Get started via the following two ways:
+            </h1>
+            <div className="space-y-2">
+              <p>
+                <span className="text-blue-200">1.</span> Select a word from
+                anywhere of your system.
+              </p>
+              <div className="flex gap-2">
+                <p className="text-blue-200">2.</p>
+                <KbdGroup>
+                  <span className="mr-2">Press</span>
+                  <Kbd>Ctrl</Kbd>
+                  <span>+</span>
+                  <Kbd>Alt</Kbd>
+                  <span>+</span>
+                  <Kbd>J</Kbd>
+                  <span className="ml-2">to do screenshot.</span>
+                </KbdGroup>
+              </div>
+            </div>
           </div>
         )}
       </div>
