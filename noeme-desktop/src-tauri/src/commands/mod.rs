@@ -2,7 +2,6 @@ use anyhow::Result;
 use noeme::Noeme;
 use serde::Deserialize;
 use tauri::{AppHandle, Manager};
-use tauri_plugin_store::StoreExt;
 
 mod error;
 use error::CommandError;
@@ -16,41 +15,45 @@ pub struct ImageArea {
 }
 
 #[tauri::command]
-pub fn crop_image(app_handle: AppHandle, image_area: ImageArea) -> Result<String, CommandError> {
-    let store = app_handle.store("store.json")?;
+pub async fn get_screenshot_path(app_handle: AppHandle) -> Result<String, CommandError> {
+    match tauri_plugin_screenshots::get_screenshotable_monitors().await {
+        Err(err) => Err(CommandError(err)),
+        Ok(monitors) => {
+            let path = app_handle
+                .path()
+                .app_data_dir()?
+                .join("tauri-plugin-screenshots")
+                .join(format!("monitor-{}.png", monitors[0].id));
 
-    if let Some(path) = store.get("path-screenshot") {
-        let safe_path = path
-            .to_string()
-            .trim()
-            .trim_matches('"')
-            .trim_matches('\\')
-            .trim_matches('"')
-            .to_string();
-
-        let mut image = image::open(safe_path)?;
-
-        image = image.crop_imm(
-            image_area.x.round() as u32,
-            image_area.y.round() as u32,
-            image_area.width.round() as u32,
-            image_area.height.round() as u32,
-        );
-
-        let path_cropped = app_handle
-            .path()
-            .app_data_dir()?
-            .join("screenshot-cropped.png")
-            .to_str()
-            .unwrap()
-            .to_owned();
-
-        image.save(format!("{}", path_cropped))?;
-
-        Ok(path_cropped)
-    } else {
-        Err(CommandError("Error happened".to_string()))
+            Ok(path.to_str().unwrap_or(&"").to_string())
+        }
     }
+}
+
+#[tauri::command]
+pub async fn crop_image(
+    app_handle: AppHandle,
+    image_area: ImageArea,
+) -> Result<String, CommandError> {
+    let path = self::get_screenshot_path(app_handle.clone()).await?;
+
+    let mut image = image::open(path)?;
+
+    image = image.crop_imm(
+        image_area.x.round() as u32,
+        image_area.y.round() as u32,
+        image_area.width.round() as u32,
+        image_area.height.round() as u32,
+    );
+
+    let path_cropped = app_handle
+        .path()
+        .app_data_dir()?
+        .join("screenshot-cropped.png");
+
+    image.save(path_cropped.clone())?;
+
+    Ok(path_cropped.to_str().unwrap_or(&"").to_string())
 }
 
 #[tauri::command]

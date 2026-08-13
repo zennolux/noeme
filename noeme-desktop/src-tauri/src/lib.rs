@@ -22,7 +22,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::crop_image,
             commands::get_selected_text,
-            commands::get_word_details
+            commands::get_word_details,
+            commands::get_screenshot_path
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
