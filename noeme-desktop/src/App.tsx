@@ -7,7 +7,6 @@ import {
   WebviewWindow,
   getCurrentWebviewWindow,
 } from "@tauri-apps/api/webviewWindow";
-import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import {
@@ -42,11 +41,7 @@ function App() {
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
-    const path = await getMonitorScreenshot(monitors[0].id);
-    const store = await load("store.json");
-
-    await store.set("path-screenshot", path);
-    await store.save();
+    await getMonitorScreenshot(monitors[0].id);
 
     new WebviewWindow("screenshot", {
       title: "noeme-screenshot",

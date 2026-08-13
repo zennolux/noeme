@@ -2,22 +2,20 @@ import "react-image-crop/dist/ReactCrop.css";
 import { useRef } from "react";
 import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { load } from "@tauri-apps/plugin-store";
 import { useEffect, useState } from "react";
 import ReactCrop, { type Crop } from "react-image-crop";
 import { createWorker } from "tesseract.js";
 
 export default function Screenshot() {
+  const currentWindow = getCurrentWebviewWindow();
   const [imgurl, setImgUrl] = useState<string | undefined>();
   const [crop, setCrop] = useState<Crop>();
   const imgref = useRef(null);
-  const currentWindow = getCurrentWebviewWindow();
 
   async function getFullScreenImage() {
-    const store = await load("store.json");
-    const path = await store.get<string>("path-screenshot");
+    const path = await invoke<string>("get_screenshot_path");
 
-    setImgUrl(convertFileSrc(path!));
+    setImgUrl(convertFileSrc(path));
   }
 
   async function saveCropedImage() {
