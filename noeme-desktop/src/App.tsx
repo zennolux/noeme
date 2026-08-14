@@ -32,7 +32,7 @@ import { name, version } from "../package.json";
 function App() {
   const win = getCurrentWebviewWindow();
   const wordEl = useRef(null);
-  const [noeme, setNoeme] = useState<Noeme>();
+  const [noeme, setNoeme] = useState<Noeme | undefined | null>(undefined);
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState<{ [key: number]: boolean }>();
   const [showPlayingIcon, setShowPlayingIcon] = useState<{
@@ -111,9 +111,18 @@ function App() {
     setNoeme(undefined);
     setLoading(true);
 
-    const wordDetails = await invoke<Noeme>("get_word_details", { word });
+    const wordDetails = await invoke<Noeme>("get_word_details", { word }).catch(
+      () => {
+        setNoeme(null);
+        setLoading(false);
+      }
+    );
 
-    setNoeme(wordDetails);
+    if (!wordDetails) {
+      return;
+    }
+
+    setNoeme(wordDetails!);
     setTimeout(() => setLoading(false), 0);
   }
 
@@ -343,27 +352,33 @@ function App() {
             data-tauri-drag-region
             className="h-full flex flex-col justify-center gap-4 px-4"
           >
-            <h1 className="font-bold">
-              Get started via the following two ways:
-            </h1>
-            <div className="space-y-2">
-              <p>
-                <span className="text-blue-200">1.</span> Select a word from
-                anywhere of your system.
-              </p>
-              <div className="flex gap-2">
-                <p className="text-blue-200">2.</p>
-                <KbdGroup>
-                  <span className="mr-2">Press</span>
-                  <Kbd>Ctrl</Kbd>
-                  <span>+</span>
-                  <Kbd>Alt</Kbd>
-                  <span>+</span>
-                  <Kbd>J</Kbd>
-                  <span className="ml-2">to do screenshot.</span>
-                </KbdGroup>
-              </div>
-            </div>
+            {noeme === undefined ? (
+              <>
+                <h1 className="font-bold">
+                  Get started via the following two ways:
+                </h1>
+                <div className="space-y-2">
+                  <p>
+                    <span className="text-blue-200">1.</span> Select a word from
+                    anywhere of your system.
+                  </p>
+                  <div className="flex gap-2">
+                    <p className="text-blue-200">2.</p>
+                    <KbdGroup>
+                      <span className="mr-2">Press</span>
+                      <Kbd>Ctrl</Kbd>
+                      <span>+</span>
+                      <Kbd>Alt</Kbd>
+                      <span>+</span>
+                      <Kbd>J</Kbd>
+                      <span className="ml-2">to do screenshot.</span>
+                    </KbdGroup>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div>No data yet</div>
+            )}
           </div>
         )}
         <footer className="absolute bottom-[2%] left-1/2 -translate-x-1/2">
