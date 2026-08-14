@@ -342,8 +342,8 @@ function App() {
               data-tauri-drag-region
               className="h-[84%] w-full flex flex-col justify-center items-center gap-4"
             >
-              {Array.from({ length: 20 }, (_, i) => i).map((_) => (
-                <Skeleton className="bg-gray-800 h-4 w-11/12" />
+              {Array.from({ length: 20 }, (_, i) => i).map((i) => (
+                <Skeleton key={i} className="bg-gray-800 h-4 w-11/12" />
               ))}
             </main>
           </div>
