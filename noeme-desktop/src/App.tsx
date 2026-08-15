@@ -385,9 +385,12 @@ function App() {
               <div className="space-y-4">
                 <div className="flex flex-col items-center justify-center space-y-2">
                   <IconExclamation className="text-4xl text-amber-300" />
-                  <p className="text-gray-300">{errMsg}</p>
+                  <p className="text-gray-300 underline underline-offset-4">
+                    {errMsg}
+                  </p>
                 </div>
                 <div className="space-y-2">
+                  <p className="font-bold">Please try the following tips:</p>
                   <p>
                     <span className="text-blue-200">1. </span>
                     Ensure words are spelled correctly.
