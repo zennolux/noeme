@@ -19,6 +19,7 @@ import {
 import { invoke } from "@tauri-apps/api/core";
 import { IoIosCloseCircleOutline as IconClose } from "react-icons/io";
 import { IoVolumeMediumOutline as IconVolume } from "react-icons/io5";
+import { FaExclamationTriangle as IconExclamation } from "react-icons/fa";
 import { BiHide as IconHide } from "react-icons/bi";
 import { VscRunBelow as IconBelow } from "react-icons/vsc";
 import { Separator } from "./components/ui/separator";
@@ -38,6 +39,7 @@ function App() {
   const [showPlayingIcon, setShowPlayingIcon] = useState<{
     [key: number]: boolean;
   }>();
+  const [errMsg, setErrMsg] = useState("");
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -112,9 +114,10 @@ function App() {
     setLoading(true);
 
     const wordDetails = await invoke<Noeme>("get_word_details", { word }).catch(
-      () => {
+      (err: string) => {
         setNoeme(null);
         setLoading(false);
+        setErrMsg(err);
       }
     );
 
@@ -379,7 +382,30 @@ function App() {
                 </div>
               </>
             ) : (
-              <div>No data yet</div>
+              <div className="space-y-4">
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <IconExclamation className="text-4xl text-amber-300" />
+                  <p className="text-gray-300">{errMsg}</p>
+                </div>
+                <div className="space-y-2">
+                  <p>
+                    <span className="text-blue-200">1. </span>
+                    Ensure words are spelled correctly.
+                  </p>
+                  <p>
+                    <span className="text-blue-200">2. </span>
+                    Try rephrasing keywords or using synonyms.
+                  </p>
+                  <p>
+                    <span className="text-blue-200">3. </span>
+                    Try less specific keywords.
+                  </p>
+                  <p>
+                    <span className="text-blue-200">4. </span>
+                    Make your queries as concise as possible.
+                  </p>
+                </div>
+              </div>
             )}
           </div>
         )}
