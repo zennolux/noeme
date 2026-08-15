@@ -292,7 +292,7 @@ function App() {
                                     }|${noeme.word.toUpperCase()}|${
                                       noeme.word.charAt(0).toUpperCase() +
                                       noeme.word.slice(1)
-                                    })`,
+                                    }|${noeme.word.toLowerCase()})`,
                                     "g"
                                   ),
                                   `<i className="underline underline-offset-4 text-amber-100">$1</i>`
