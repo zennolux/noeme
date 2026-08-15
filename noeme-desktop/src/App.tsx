@@ -132,6 +132,8 @@ function App() {
     });
 
     const unlistenOcr = listen<string>("ocr-completed", (event) => {
+      win.show();
+
       getWordDetails(event.payload);
     });
 
