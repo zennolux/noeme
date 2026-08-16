@@ -62,6 +62,10 @@ function App() {
     onPlaying: Function | undefined = undefined,
     onEnded: Function | undefined = undefined
   ) {
+    if (url.length < 1) {
+      return;
+    }
+
     const audio = new Audio(url);
     audio.play();
 
@@ -115,24 +119,41 @@ function App() {
   }
 
   useEffect(() => {
-    const unlistenScreenshot = listen("shortcut-screenshot", () => {
-      createScreenshotableWindow();
-    });
-
-    const unlistenOcr = listen<string>("ocr-completed", (event) => {
-      win.show();
-
-      getWordDetails(event.payload);
-    });
-
     listenGlobalMouseEvent();
+
+    const unlistenHotkeyPressed = listen<"Screenshot" | "HideWindow">(
+      "hotkey-pressed",
+      (event) => {
+        switch (event.payload) {
+          case "Screenshot":
+            createScreenshotableWindow();
+            break;
+
+          case "HideWindow":
+            win.hide();
+            break;
+
+          default:
+            break;
+        }
+      }
+    );
+
+    const unlistenOcrRecognized = listen<Noeme["word"]>(
+      "ocr-recognized",
+      (event) => {
+        win.show();
+
+        getWordDetails(event.payload);
+      }
+    );
 
     return () => {
       stopListening();
 
-      unlistenScreenshot.then((fn) => fn());
+      unlistenHotkeyPressed.then((fn) => fn());
 
-      unlistenOcr.then((fn) => fn());
+      unlistenOcrRecognized.then((fn) => fn());
     };
   }, []);
 

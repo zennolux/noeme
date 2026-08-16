@@ -47,7 +47,7 @@ export default function Screenshot() {
     setTimeout(() => {
       currentWindow.emitTo(
         "main",
-        "ocr-completed",
+        "ocr-recognized",
         data.text.replace(/[^a-zA-Z ]/g, "")
       );
       currentWindow.close();
