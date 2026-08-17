@@ -7,20 +7,21 @@ use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut,
 #[derive(Debug, PartialEq, EnumString, Display, AsRefStr, Serialize, Clone)]
 enum HotkeyKind {
     Screenshot,
-    HideWindow,
+    ToggleWindowVisibleState,
 }
 
 pub fn register(app: &mut App) -> Result<()> {
     let shortcut_screenshot = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyJ);
-    let shortcut_hide_window = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyH);
+    let shortcut_toggle_window =
+        Shortcut::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyH);
 
     app.handle().plugin(
         tauri_plugin_global_shortcut::Builder::new()
             .with_handler(move |app_handle, shortcut, event| {
                 let mut hotkey_kind = HotkeyKind::Screenshot;
 
-                if shortcut == &shortcut_hide_window {
-                    hotkey_kind = HotkeyKind::HideWindow;
+                if shortcut == &shortcut_toggle_window {
+                    hotkey_kind = HotkeyKind::ToggleWindowVisibleState;
                 }
 
                 if event.state() != ShortcutState::Pressed {
@@ -35,7 +36,7 @@ pub fn register(app: &mut App) -> Result<()> {
     )?;
 
     app.global_shortcut().register(shortcut_screenshot)?;
-    app.global_shortcut().register(shortcut_hide_window)?;
+    app.global_shortcut().register(shortcut_toggle_window)?;
 
     Ok(())
 }

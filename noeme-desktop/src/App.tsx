@@ -20,7 +20,6 @@ import { invoke } from "@tauri-apps/api/core";
 import { IoIosCloseCircleOutline as IconClose } from "react-icons/io";
 import { IoVolumeMediumOutline as IconVolume } from "react-icons/io5";
 import { FaExclamationTriangle as IconExclamation } from "react-icons/fa";
-import { BiHide as IconHide } from "react-icons/bi";
 import { VscRunBelow as IconBelow } from "react-icons/vsc";
 import { Separator } from "./components/ui/separator";
 import { ScrollArea } from "./components/ui/scroll-area";
@@ -121,23 +120,24 @@ function App() {
   useEffect(() => {
     listenGlobalMouseEvent();
 
-    const unlistenHotkeyPressed = listen<"Screenshot" | "HideWindow">(
-      "hotkey-pressed",
-      (event) => {
-        switch (event.payload) {
-          case "Screenshot":
-            createScreenshotableWindow();
-            break;
+    const unlistenHotkeyPressed = listen<
+      "Screenshot" | "ToggleWindowVisibleState"
+    >("hotkey-pressed", (event) => {
+      switch (event.payload) {
+        case "Screenshot":
+          createScreenshotableWindow();
+          break;
 
-          case "HideWindow":
-            win.hide();
-            break;
+        case "ToggleWindowVisibleState":
+          win.isVisible().then((visible) => {
+            visible ? win.hide() : win.show();
+          });
+          break;
 
-          default:
-            break;
-        }
+        default:
+          break;
       }
-    );
+    });
 
     const unlistenOcrRecognized = listen<Noeme["word"]>(
       "ocr-recognized",
@@ -165,11 +165,6 @@ function App() {
       >
         <div className="absolute -top-[0.15rem] -right-[0.15rem]">
           <div className="flex gap-2 opacity-60">
-            <IconHide
-              className="text-2xl text-gray-500 hover:text-gray-300"
-              title="Hide the window"
-              onClick={() => win.hide()}
-            />
             <IconClose
               title="Close the window"
               className="text-2xl text-gray-500 hover:text-gray-300"
