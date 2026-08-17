@@ -27,6 +27,7 @@ import parse from "html-react-parser";
 import { Skeleton } from "./components/ui/skeleton";
 import { Kbd, KbdGroup } from "./components/ui/kbd";
 import { name, version } from "../package.json";
+import { AttrTag } from "./components/AttrTag";
 
 function App() {
   const win = getCurrentWebviewWindow();
@@ -88,12 +89,13 @@ function App() {
       }
 
       const text = await invoke<string>("get_selected_text");
+      const word = text.replace(/[^a-zA-Z ]/g, "");
 
-      if (text.length < 1) {
+      if (word.length < 1) {
         return;
       }
 
-      getWordDetails(text);
+      getWordDetails(word);
     });
   }
 
@@ -216,8 +218,8 @@ function App() {
                         key={item.attr}
                         className="flex items-center gap-2 mt-2"
                       >
-                        <dt className="w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
-                          {item.attr}
+                        <dt>
+                          <AttrTag>{item.attr}</AttrTag>
                         </dt>
                         <dd className="w-[90%]">{item.value}</dd>
                       </dl>
@@ -234,9 +236,7 @@ function App() {
                     </div>
                     {noeme.advanced_meanings.map((item) => (
                       <div key={item.attr} className="mt-2">
-                        <p className=" w-10 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
-                          {item.attr}
-                        </p>
+                        <AttrTag>{item.attr}</AttrTag>
                         {item.values.map((value, index) => (
                           <div key={index}>
                             <dl className="flex items-center gap-4 mt-2">
