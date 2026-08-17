@@ -192,7 +192,7 @@ function App() {
                   </i>
                   /
                 </p>
-                <p className="text-amber-100 hover:text-amber-300">
+                <p className="text-amber-50 hover:text-amber-200">
                   <IconVolume
                     className="text-2xl"
                     onClick={() => pronounce(noeme.pronunciation.audio_url)}
@@ -201,7 +201,7 @@ function App() {
               </div>
             </header>
             <Separator className="bg-gray-700" />
-            <main className="h-[84%]">
+            <main className="h-[84%] select-none">
               <ScrollArea className="h-[100%] px-3">
                 {noeme.basic_meanings?.length > 0 && (
                   <div className="mt-2">
@@ -305,13 +305,15 @@ function App() {
                               )}
                               {showPlayingIcon && showPlayingIcon[index] && (
                                 <IconVolume
-                                  className={`text-2xl text-amber-100 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
+                                  className={`text-2xl text-amber-200 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
                                     playing && playing[index] && "animate-ping"
                                   }`}
                                   onClick={() => {
                                     pronounce(
                                       item.audio_url,
-                                      () => setPlaying({ [index]: true }),
+                                      () => {
+                                        setPlaying({ [index]: true });
+                                      },
                                       () => {
                                         setShowPlayingIcon({ [index]: false });
                                         setPlaying({ [index]: false });
