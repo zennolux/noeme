@@ -29,11 +29,12 @@ import { Kbd, KbdGroup } from "./components/ui/kbd";
 import { name, version } from "../package.json";
 import { AttrTag } from "./components/AttrTag";
 
-function App() {
+export default function App() {
   const win = getCurrentWebviewWindow();
   const wordEl = useRef(null);
   const [noeme, setNoeme] = useState<Noeme | undefined | null>(undefined);
   const [loading, setLoading] = useState(false);
+  const [pronouncing, setPronouncing] = useState(false);
   const [playing, setPlaying] = useState<{ [key: number]: boolean }>();
   const [showPlayingIcon, setShowPlayingIcon] = useState<{
     [key: number]: boolean;
@@ -57,7 +58,7 @@ function App() {
     });
   }
 
-  function pronounce(
+  function play(
     url: string,
     onPlaying: Function | undefined = undefined,
     onEnded: Function | undefined = undefined
@@ -194,12 +195,18 @@ function App() {
                   </i>
                   /
                 </p>
-                <p className="text-amber-50 hover:text-amber-200">
-                  <IconVolume
-                    className="text-2xl"
-                    onClick={() => pronounce(noeme.pronunciation.audio_url)}
-                  />
-                </p>
+                <IconVolume
+                  className={`text-2xl text-amber-100 hover:text-amber-200 ${
+                    pronouncing && "animate-ping"
+                  }`}
+                  onClick={() =>
+                    play(
+                      noeme.pronunciation.audio_url,
+                      () => setPronouncing(true),
+                      () => setPronouncing(false)
+                    )
+                  }
+                />
               </div>
             </header>
             <Separator className="bg-gray-700" />
@@ -309,7 +316,7 @@ function App() {
                                     playing && playing[index] && "animate-ping"
                                   }`}
                                   onClick={() => {
-                                    pronounce(
+                                    play(
                                       item.audio_url,
                                       () => {
                                         setPlaying({ [index]: true });
@@ -361,9 +368,7 @@ function App() {
           >
             {noeme === undefined ? (
               <>
-                <h1 className="font-bold">
-                  Get started via the following two ways:
-                </h1>
+                <h1 className="font-bold">Tips for getting started:</h1>
                 <div className="space-y-2">
                   <p>
                     <span className="text-blue-200">1.</span> Select a word from
@@ -429,5 +434,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
