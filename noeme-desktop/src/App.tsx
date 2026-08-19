@@ -116,6 +116,10 @@ export default function App() {
       return;
     }
 
+    if (!(await win.isVisible())) {
+      win.show();
+    }
+
     setNoeme(wordDetails!);
     setTimeout(() => setLoading(false), 0);
   }
@@ -145,8 +149,6 @@ export default function App() {
     const unlistenOcrRecognized = listen<Noeme["word"]>(
       "ocr-recognized",
       (event) => {
-        win.show();
-
         getWordDetails(event.payload);
       }
     );
