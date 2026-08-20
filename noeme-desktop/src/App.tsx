@@ -94,6 +94,10 @@ export default function App() {
   }
 
   async function getWordDetails(word: string) {
+    if (!(await win.isVisible())) {
+      win.show();
+    }
+
     setNoeme(undefined);
     setLoading(true);
 
@@ -107,10 +111,6 @@ export default function App() {
 
     if (!wordDetails) {
       return;
-    }
-
-    if (!(await win.isVisible())) {
-      win.show();
     }
 
     setNoeme(wordDetails!);
