@@ -48,7 +48,7 @@ export default function Screenshot() {
       currentWindow.emitTo(
         "main",
         "ocr-recognized",
-        data.text.replace(/[^a-zA-Z ]/g, "")
+        data.text.replace(/[^a-zA-Z]/g, " ")
       );
       currentWindow.close();
     }, 0);
@@ -67,7 +67,7 @@ export default function Screenshot() {
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      {imgurl ? (
+      {imgurl && (
         <ReactCrop
           crop={crop}
           onChange={(crop) => setCrop(crop)}
@@ -75,8 +75,6 @@ export default function Screenshot() {
         >
           <img ref={imgref} style={{ margin: 0, padding: 0 }} src={imgurl} />
         </ReactCrop>
-      ) : (
-        "Loading..."
       )}
     </div>
   );

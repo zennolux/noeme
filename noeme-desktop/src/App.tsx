@@ -70,15 +70,8 @@ export default function App() {
     const audio = new Audio(url);
     audio.play();
 
-    onPlaying &&
-      audio.addEventListener("playing", () => {
-        onPlaying();
-      });
-
-    onEnded &&
-      audio.addEventListener("ended", () => {
-        onEnded();
-      });
+    onPlaying && audio.addEventListener("playing", () => onPlaying());
+    onEnded && audio.addEventListener("ended", () => onEnded());
   }
 
   async function listenGlobalMouseEvent() {
@@ -90,7 +83,7 @@ export default function App() {
       }
 
       const text = await invoke<string>("get_selected_text");
-      const word = text.replace(/[^a-zA-Z ]/g, "");
+      const word = text.replace(/[^a-zA-Z]/g, " ");
 
       if (word.length < 1) {
         return;
