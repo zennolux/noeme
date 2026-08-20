@@ -28,6 +28,7 @@ import { Skeleton } from "./components/ui/skeleton";
 import { Kbd, KbdGroup } from "./components/ui/kbd";
 import { name, version } from "../package.json";
 import { AttrTag } from "./components/AttrTag";
+import { getWordDetailsFromLocal, saveNewWord } from "./lib/db";
 
 export default function App() {
   const win = getCurrentWebviewWindow();
@@ -94,6 +95,10 @@ export default function App() {
   }
 
   async function getWordDetails(word: string) {
+    if (!/[a-zA-Z]+/.test(word)) {
+      return;
+    }
+
     if (!(await win.isVisible())) {
       win.show();
     }
@@ -101,20 +106,26 @@ export default function App() {
     setNoeme(undefined);
     setLoading(true);
 
-    const wordDetails = await invoke<Noeme>("get_word_details", { word }).catch(
-      (err: string) => {
-        setNoeme(null);
-        setLoading(false);
-        setErrMsg(err);
-      }
-    );
+    let wordDetails = await getWordDetailsFromLocal(word);
+
+    if (!wordDetails) {
+      wordDetails = await invoke<Noeme>("get_word_details", { word }).catch(
+        (err: string) => {
+          setNoeme(null);
+          setLoading(false);
+          setErrMsg(err);
+        }
+      );
+    }
 
     if (!wordDetails) {
       return;
     }
 
-    setNoeme(wordDetails!);
+    setNoeme(wordDetails);
     setTimeout(() => setLoading(false), 0);
+
+    await saveNewWord(wordDetails);
   }
 
   useEffect(() => {

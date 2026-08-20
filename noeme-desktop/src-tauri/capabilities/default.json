@@ -18,6 +18,8 @@
     "core:path:default",
     "store:default",
     "user-input:default",
-    "window-state:default"
+    "window-state:default",
+    "sql:default",
+    "sql:allow-execute"
   ]
 }

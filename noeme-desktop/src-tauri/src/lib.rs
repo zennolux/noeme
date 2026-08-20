@@ -1,9 +1,13 @@
 mod commands;
 mod hotkey;
+mod migration;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let sql_migration = migration::Migration::init();
+
     tauri::Builder::default()
+        .plugin(tauri_plugin_sql::Builder::new().build())
         .setup(|app| {
             hotkey::register(app)?;
 
@@ -17,6 +21,11 @@ pub fn run() {
             tauri_plugin_window_state::Builder::default()
                 .with_denylist(&["screenshot"])
                 .with_state_flags(tauri_plugin_window_state::StateFlags::all())
+                .build(),
+        )
+        .plugin(
+            tauri_plugin_sql::Builder::default()
+                .add_migrations(sql_migration.connection.as_str(), sql_migration.build())
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
