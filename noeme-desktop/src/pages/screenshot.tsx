@@ -38,7 +38,7 @@ export default function Screenshot() {
       height: crop.height * scaleY,
     };
 
-    const path = (await invoke("crop_image", { imageArea })) as string;
+    const path = await invoke<string>("crop_image", { imageArea });
     const worker = await createWorker("eng");
     const { data } = await worker.recognize(convertFileSrc(path));
 
@@ -48,7 +48,7 @@ export default function Screenshot() {
       currentWindow.emitTo(
         "main",
         "ocr-recognized",
-        data.text.replace(/[^a-zA-Z]/g, " ")
+        data.text.replace(/[^a-zA-Z]/g, " ").split(" ")[0]
       );
       currentWindow.close();
     }, 0);

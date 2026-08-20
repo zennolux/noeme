@@ -83,7 +83,7 @@ export default function App() {
       }
 
       const text = await invoke<string>("get_selected_text");
-      const word = text.replace(/[^a-zA-Z]/g, " ");
+      const word = text.replace(/[^a-zA-Z]/g, " ").split(" ")[0];
 
       if (word.length < 1) {
         return;
