@@ -168,7 +168,7 @@ export default function App() {
   return (
     <div
       data-tauri-drag-region
-      className="h-full bg-gray-900/90 backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
+      className="h-full bg-gray-900 backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
     >
       <div className="absolute -top-[0.15rem] -right-[0.15rem]">
         <div className="flex gap-2 opacity-60">
