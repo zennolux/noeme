@@ -213,7 +213,7 @@ export default function App() {
               />
             </div>
           </header>
-          <Separator className="bg-gray-800" />
+          <Separator className="bg-gray-700" />
           <main className="h-[84%] select-none">
             <ScrollArea className="h-[100%] px-3">
               {noeme.basic_meanings?.length > 0 && (
@@ -258,7 +258,7 @@ export default function App() {
                             </dd>
                           </dl>
                           {index < item.values.length - 1 && (
-                            <Separator className="mt-2 bg-gray-900 opacity-80" />
+                            <Separator className="mt-2 bg-gray-800" />
                           )}
                         </div>
                       ))}
@@ -334,7 +334,7 @@ export default function App() {
                         </dd>
                       </dl>
                       {index < noeme.sentences.length - 1 && (
-                        <Separator className="mt-2 bg-gray-900 opacity-80" />
+                        <Separator className="mt-2 bg-gray-800" />
                       )}
                     </div>
                   ))}
