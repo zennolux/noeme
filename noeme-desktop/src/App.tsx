@@ -21,6 +21,7 @@ import { IoIosCloseCircleOutline as IconClose } from "react-icons/io";
 import { IoVolumeMediumOutline as IconVolume } from "react-icons/io5";
 import { FaExclamationTriangle as IconExclamation } from "react-icons/fa";
 import { VscRunBelow as IconBelow } from "react-icons/vsc";
+import { LiaHistorySolid as IconHistory } from "react-icons/lia";
 import { Separator } from "./components/ui/separator";
 import { ScrollArea } from "./components/ui/scroll-area";
 import parse from "html-react-parser";
@@ -170,15 +171,12 @@ export default function App() {
       data-tauri-drag-region
       className="h-full bg-gray-900 backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
     >
-      <div className="absolute -top-[0.15rem] -right-[0.15rem]">
-        <div className="flex gap-2 opacity-60">
-          <IconClose
-            title="Close the window"
-            className="text-2xl text-gray-500 hover:text-gray-300"
-            onClick={() => win.close()}
-          />
-        </div>
-      </div>
+      <IconHistory className="absolute -top-[0.15rem] -left-[0.15rem] text-2xl text-gray-500 hover:text-gray-300" />
+      <IconClose
+        title="Close the window"
+        className="absolute -top-[0.15rem] -right-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
+        onClick={() => win.close()}
+      />
       {noeme ? (
         <>
           <header
