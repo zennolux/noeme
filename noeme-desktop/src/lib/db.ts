@@ -1,6 +1,6 @@
 import Database from "@tauri-apps/plugin-sql";
 
-enum MarkKind {
+export enum MarkKind {
   Fresh,
   Maybe,
   Mastered,
