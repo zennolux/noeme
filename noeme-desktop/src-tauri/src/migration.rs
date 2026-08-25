@@ -20,6 +20,7 @@ impl Migration {
                 CREATE TABLE vocabularies(
                         id INTEGER PRIMARY KEY,
                         name TEXT,
+                        meaning TEXT,
                         mark INTEGER,
                         details TEXT,
                         created_at TEXT
