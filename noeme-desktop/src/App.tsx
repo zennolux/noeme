@@ -110,7 +110,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    setComponent(Component.WordDetails);
+    setComponent(Component.LocalWords);
   }, []);
 
   return (
