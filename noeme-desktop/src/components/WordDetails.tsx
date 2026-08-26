@@ -123,7 +123,14 @@ export default function WordDetails({
           </header>
           <Separator className="bg-gray-700" />
           <main className="h-[84%] select-none">
-            <ScrollArea className="h-[100%] px-3">
+            <ScrollArea
+              className="h-[100%] px-3"
+              key={
+                noeme.basic_meanings.length +
+                noeme.advanced_meanings.length +
+                noeme.sentences.length
+              }
+            >
               {noeme.basic_meanings?.length > 0 && (
                 <div className="mt-2">
                   <div className="flex items-center gap-2">
