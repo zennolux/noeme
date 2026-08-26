@@ -1,12 +1,13 @@
 import Database from "@tauri-apps/plugin-sql";
 
 export enum MarkKind {
-  Fresh,
-  Maybe,
+  New,
+  Unsure,
   Mastered,
 }
 
 export interface LocalWord {
+  id: number;
   name: string;
   meaning: string;
   mark: MarkKind;
@@ -23,7 +24,7 @@ export async function getLocalWords(
 ): Promise<{ total: number; data: Array<LocalWord> }> {
   const db = await loadDatabse();
 
-  const sql = "SELECT {} FROM vocabularies WHERE mark = $1";
+  const sql = "SELECT {} FROM vocabularies WHERE mark = $1 ORDER BY id DESC;";
 
   const total = (
     await db.select<[{ total: number }]>(
@@ -65,7 +66,7 @@ export async function saveNewWord(noeme: Noeme) {
     [
       noeme.word.toLowerCase(),
       noeme.basic_meanings[0]?.value,
-      MarkKind.Fresh,
+      MarkKind.New,
       JSON.stringify(noeme),
       new Date().toLocaleString(),
     ]
