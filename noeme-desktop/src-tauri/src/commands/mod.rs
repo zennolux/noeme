@@ -66,7 +66,7 @@ pub fn get_selected_text() -> String {
 
 #[tauri::command]
 pub async fn get_word_details(word: String) -> Result<Noeme, CommandError> {
-    match Noeme::from(word.as_str().trim()).await {
+    match Noeme::from(&word.to_lowercase().as_str().trim()).await {
         Ok(result) => {
             println!("{:#?}", result);
 
