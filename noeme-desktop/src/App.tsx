@@ -20,19 +20,15 @@ import {
   startListening,
   stopListening,
 } from "tauri-plugin-user-input-api";
+import { NoemeChild } from "@/lib/utils";
 
 import WordDetails from "@/components/WordDetails";
 import LocalWords from "@/components/LocalWords";
 
-enum Component {
-  WordDetails,
-  LocalWords,
-}
-
 export default function App() {
   const win = getCurrentWebviewWindow();
   const [word, setWord] = useState<Noeme["word"]>();
-  const [component, setComponent] = useState<Component>();
+  const [child, setChild] = useState<NoemeChild>();
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -66,8 +62,8 @@ export default function App() {
         return;
       }
 
-      setComponent(Component.WordDetails);
       setWord(word);
+      setChild(NoemeChild.WordDetails);
     });
   }
 
@@ -96,10 +92,12 @@ export default function App() {
     const unlistenOcrRecognized = listen<Noeme["word"]>(
       "ocr-recognized",
       (event) => {
-        setComponent(Component.WordDetails);
         setWord(event.payload);
+        setChild(NoemeChild.WordDetails);
       }
     );
+
+    setChild(NoemeChild.LocalWords);
 
     return () => {
       stopListening();
@@ -109,28 +107,26 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-    setComponent(Component.LocalWords);
-  }, []);
-
   return (
     <div
       data-tauri-drag-region
       className="h-full bg-gray-900 backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
     >
-      <IconHistory
-        onClick={() => setComponent(Component.LocalWords)}
-        className="absolute -top-[0.15rem] -left-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
-      />
+      {child === NoemeChild.WordDetails && (
+        <IconHistory
+          onClick={() => setChild(NoemeChild.LocalWords)}
+          className="absolute -top-[0.15rem] -left-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
+        />
+      )}
       <IconClose
         title="Close the window"
         className="absolute -top-[0.15rem] -right-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
         onClick={() => win.close()}
       />
-      {component === Component.WordDetails ? (
+      {child === NoemeChild.WordDetails ? (
         <WordDetails word={word} />
       ) : (
-        <LocalWords />
+        <LocalWords setWord={setWord} setChild={setChild} />
       )}
       <footer className="absolute bottom-[2%] left-1/2 -translate-x-1/2">
         <a

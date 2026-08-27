@@ -72,3 +72,18 @@ export async function saveNewWord(noeme: Noeme) {
     ]
   );
 }
+
+export async function updateWordMark(id: number, mark: MarkKind) {
+  const db = await loadDatabse();
+
+  return db.execute("UPDATE vocabularies SET mark = $1 WHERE id = $2", [
+    mark,
+    id,
+  ]);
+}
+
+export async function removeWord(id: number) {
+  const db = await loadDatabse();
+
+  return db.execute("DELETE FROM vocabularies WHERE id = $1", [id]);
+}
