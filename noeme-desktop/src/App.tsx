@@ -27,7 +27,10 @@ import LocalWords from "@/components/LocalWords";
 
 export default function App() {
   const win = getCurrentWebviewWindow();
-  const [word, setWord] = useState<Noeme["word"]>();
+  const [word, setWord] = useState<{
+    value: Noeme["word"];
+    shouldSaveToLocal: boolean;
+  }>();
   const [child, setChild] = useState<NoemeChild>();
 
   async function createScreenshotableWindow() {
@@ -62,7 +65,7 @@ export default function App() {
         return;
       }
 
-      setWord(word);
+      setWord({ value: word, shouldSaveToLocal: true });
       setChild(NoemeChild.WordDetails);
     });
   }
@@ -92,7 +95,7 @@ export default function App() {
     const unlistenOcrRecognized = listen<Noeme["word"]>(
       "ocr-recognized",
       (event) => {
-        setWord(event.payload);
+        setWord({ value: event.payload, shouldSaveToLocal: true });
         setChild(NoemeChild.WordDetails);
       }
     );

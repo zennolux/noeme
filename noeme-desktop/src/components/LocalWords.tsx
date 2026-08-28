@@ -35,7 +35,11 @@ export default function LocalWords({
   setWord,
   setChild: setChild,
 }: {
-  setWord: Dispatch<SetStateAction<string | undefined>>;
+  setWord: Dispatch<
+    SetStateAction<
+      { value: Noeme["word"]; shouldSaveToLocal: boolean } | undefined
+    >
+  >;
   setChild: Dispatch<SetStateAction<NoemeChild | undefined>>;
 }) {
   const [mark, setMark] = useState<MarkKind>(MarkKind.New);
@@ -63,7 +67,7 @@ export default function LocalWords({
   }
 
   function viewWordDetails(word: Noeme["word"]) {
-    setWord(word);
+    setWord({ value: word, shouldSaveToLocal: false });
     setChild(NoemeChild.WordDetails);
   }
 

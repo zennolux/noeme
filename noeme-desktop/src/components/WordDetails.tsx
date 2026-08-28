@@ -15,7 +15,7 @@ import { getWordDetailsFromLocal, saveNewWord } from "@/lib/db";
 export default function WordDetails({
   word,
 }: {
-  word: Noeme["word"] | undefined;
+  word: { value: Noeme["word"]; shouldSaveToLocal: boolean } | undefined;
 }) {
   const win = getCurrentWebviewWindow();
   const wordEl = useRef(null);
@@ -44,8 +44,12 @@ export default function WordDetails({
     onEnded && audio.addEventListener("ended", () => onEnded());
   }
 
-  async function getWordDetails(word: string) {
-    if (!/[a-zA-Z]+/.test(word)) {
+  async function getWordDetails() {
+    if (!word?.value) {
+      return;
+    }
+
+    if (!/[a-zA-Z]+/.test(word?.value)) {
       return;
     }
 
@@ -56,16 +60,16 @@ export default function WordDetails({
     setNoeme(undefined);
     setLoading(true);
 
-    let wordDetails = await getWordDetailsFromLocal(word);
+    let wordDetails = await getWordDetailsFromLocal(word.value);
 
     if (!wordDetails) {
-      wordDetails = await invoke<Noeme>("get_word_details", { word }).catch(
-        (err: string) => {
-          setNoeme(null);
-          setLoading(false);
-          setErrMsg(err);
-        }
-      );
+      wordDetails = await invoke<Noeme>("get_word_details", {
+        word: word.value,
+      }).catch((err: string) => {
+        setNoeme(null);
+        setLoading(false);
+        setErrMsg(err);
+      });
     }
 
     if (!wordDetails) {
@@ -75,15 +79,15 @@ export default function WordDetails({
     setNoeme(wordDetails);
     setTimeout(() => setLoading(false), 0);
 
-    await saveNewWord(wordDetails);
+    word.shouldSaveToLocal && (await saveNewWord(wordDetails));
   }
 
   useEffect(() => {
-    if (!word) {
+    if (!word?.value) {
       return;
     }
-    getWordDetails(word);
-  }, [word]);
+    getWordDetails();
+  }, [word?.value]);
 
   return (
     <>
