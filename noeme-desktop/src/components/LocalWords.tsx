@@ -16,9 +16,9 @@ import { CgDetailsMore as IconDetails } from "react-icons/cg";
 import { FaMarker as IconMarker } from "react-icons/fa";
 import { RiDeleteRow as IconDelete } from "react-icons/ri";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { NoemeChild } from "@/lib/utils";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { NoemeChild } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -151,6 +151,49 @@ export default function LocalWords({
                         title="View details"
                         onClick={() => viewWordDetails(item.name)}
                       />
+                      {mark != MarkKind.Mastered && (
+                        <Tooltip>
+                          <TooltipTrigger
+                            render={
+                              <IconMarker
+                                className="text-blue-200 cursor-pointer"
+                                title="Mark"
+                              />
+                            }
+                          />
+                          <TooltipContent
+                            className="bg-gray-200 text-gray-900 opacity-85"
+                            side="right"
+                          >
+                            <RadioGroup
+                              onValueChange={(value: MarkKind) =>
+                                markSpecificWord(item.id, value)
+                              }
+                            >
+                              {mark === MarkKind.New && (
+                                <div className="flex items-center gap-3">
+                                  <RadioGroupItem
+                                    title="Mark as `Unsure`"
+                                    className="bg-gray-600"
+                                    value={MarkKind.Unsure}
+                                    id="mark-unsure"
+                                  />
+                                  <Label htmlFor="mark-unsure">Unsure</Label>
+                                </div>
+                              )}
+                              <div className="flex items-center gap-3">
+                                <RadioGroupItem
+                                  title="Mark as `Mastered`"
+                                  className="bg-gray-600"
+                                  value={MarkKind.Mastered}
+                                  id="mark-mastered"
+                                />
+                                <Label htmlFor="mark-mastered">Mastered</Label>
+                              </div>
+                            </RadioGroup>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                       <AlertDialog>
                         <AlertDialogTrigger
                           nativeButton={false}
@@ -181,45 +224,6 @@ export default function LocalWords({
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                      <Tooltip>
-                        <TooltipTrigger
-                          render={
-                            <IconMarker
-                              className="text-blue-200 cursor-pointer"
-                              title="Mark"
-                            />
-                          }
-                        />
-                        <TooltipContent
-                          className="bg-gray-200 text-gray-900 opacity-65"
-                          side="right"
-                        >
-                          <RadioGroup
-                            onValueChange={(value: MarkKind) =>
-                              markSpecificWord(item.id, value)
-                            }
-                          >
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem
-                                title="Mark as `Unsure`"
-                                className="bg-gray-600"
-                                value={MarkKind.Unsure}
-                                id="mark-unsure"
-                              />
-                              <Label htmlFor="mark-unsure">Unsure</Label>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <RadioGroupItem
-                                title="Mark as `Mastered`"
-                                className="bg-gray-600"
-                                value={MarkKind.Mastered}
-                                id="mark-mastered"
-                              />
-                              <Label htmlFor="mark-mastered">Mastered</Label>
-                            </div>
-                          </RadioGroup>
-                        </TooltipContent>
-                      </Tooltip>
                     </div>
                   </div>
                 )}
