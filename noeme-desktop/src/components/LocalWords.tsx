@@ -46,12 +46,15 @@ export default function LocalWords({
   const [total, setTotal] = useState(0);
   const [data, setData] = useState<Array<LocalWord>>();
   const [hoverThis, setHoverThis] = useState<number>();
+  const [dynamicKey, setDynamicKey] = useState<string>();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   async function setLocalWords(mark: MarkKind) {
     const { total, data } = await getLocalWords(mark);
 
     setTotal(total);
     setData(data);
+    setDynamicKey(`${mark}-${total}`);
   }
 
   async function markSpecificWord(id: number, markAs: MarkKind) {
@@ -63,7 +66,9 @@ export default function LocalWords({
   async function removeSpecificWord(id: number) {
     await removeWord(id);
 
-    setLocalWords(mark);
+    setTotal(total - 1);
+    setData(data?.filter((item) => item.id !== id));
+    setDialogOpen(false);
   }
 
   function viewWordDetails(word: Noeme["word"]) {
@@ -124,7 +129,7 @@ export default function LocalWords({
       </header>
       <Separator className="bg-gray-700" />
       <main className="h-[84%] select-none">
-        <ScrollArea className="h-full px-3" key={data?.length}>
+        <ScrollArea className="h-full px-3" key={dynamicKey}>
           {data?.map((item, index) => (
             <div key={index}>
               <div
@@ -194,13 +199,14 @@ export default function LocalWords({
                           </TooltipContent>
                         </Tooltip>
                       )}
-                      <AlertDialog>
+                      <AlertDialog open={dialogOpen}>
                         <AlertDialogTrigger
                           nativeButton={false}
                           render={
                             <IconDelete
                               className="text-2xl text-red-200 cursor-pointer"
                               title="Delete this one"
+                              onClick={() => setDialogOpen(true)}
                             />
                           }
                         />
