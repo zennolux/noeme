@@ -23,10 +23,12 @@ impl Migration {
                         meaning TEXT,
                         mark INTEGER,
                         details TEXT,
-                        created_at TEXT
+                        created_at TEXT,
+                        updated_at INTEGER 
                 );
                 CREATE UNIQUE INDEX idx_name ON vocabularies(name);
                 CREATE INDEX idx_mark ON vocabularies(mark);
+                CREATE INDEX idx_updated_at ON vocabularies(updated_at);
             ",
             kind: MigrationKind::Up,
         }]
