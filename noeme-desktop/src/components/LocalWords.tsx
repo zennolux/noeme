@@ -57,10 +57,11 @@ export default function LocalWords({
     setDynamicKey(`${mark}-${total}`);
   }
 
-  async function markSpecificWord(id: number, markAs: MarkKind) {
-    await updateWordMark(id, markAs);
+  async function markSpecificWord(id: number, targetMark: MarkKind) {
+    await updateWordMark(id, targetMark);
 
-    setLocalWords(mark);
+    setMark(targetMark);
+    setLocalWords(targetMark);
   }
 
   async function removeSpecificWord(id: number) {

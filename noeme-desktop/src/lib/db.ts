@@ -24,7 +24,8 @@ export async function getLocalWords(
 ): Promise<{ total: number; data: Array<LocalWord> }> {
   const db = await loadDatabse();
 
-  const sql = "SELECT {} FROM vocabularies WHERE mark = $1 ORDER BY id DESC;";
+  const sql =
+    "SELECT {} FROM vocabularies WHERE mark = $1 ORDER BY updated_at DESC;";
 
   const total = (
     await db.select<[{ total: number }]>(
@@ -62,13 +63,14 @@ export async function saveNewWord(noeme: Noeme) {
   const db = await loadDatabse();
 
   return db.execute(
-    "REPLACE INTO vocabularies (name, meaning, mark, details, created_at) VALUES ($1, $2, $3, $4, $5)",
+    "REPLACE INTO vocabularies (name, meaning, mark, details, created_at,updated_at) VALUES ($1, $2, $3, $4, $5, $6)",
     [
       noeme.word.toLowerCase(),
       noeme.basic_meanings[0]?.value,
       MarkKind.New,
       JSON.stringify(noeme),
       new Date().toLocaleString(),
+      Math.floor(Date.now() / 1000),
     ]
   );
 }
@@ -76,10 +78,10 @@ export async function saveNewWord(noeme: Noeme) {
 export async function updateWordMark(id: number, mark: MarkKind) {
   const db = await loadDatabse();
 
-  return db.execute("UPDATE vocabularies SET mark = $1 WHERE id = $2", [
-    mark,
-    id,
-  ]);
+  return db.execute(
+    "UPDATE vocabularies SET mark = $1, updated_at=$2 WHERE id = $3",
+    [mark, Math.floor(Date.now() / 1000), id]
+  );
 }
 
 export async function removeWord(id: number) {
