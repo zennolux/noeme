@@ -12,7 +12,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CgDetailsMore as IconDetails } from "react-icons/cg";
 import { FaMarker as IconMarker } from "react-icons/fa";
 import { RiDeleteRow as IconDelete } from "react-icons/ri";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -130,117 +129,125 @@ export default function LocalWords({
       </header>
       <Separator className="bg-gray-700" />
       <main className="h-[84%] select-none">
-        <ScrollArea className="h-full px-3" key={dynamicKey}>
-          {data?.map((item, index) => (
-            <div key={index}>
-              <div
-                className="relative min-h-16 my-4 hover:bg-gray-700 hover:opacity-70"
-                onMouseOver={() => setHoverThis(index)}
-                onMouseLeave={() => setHoverThis(undefined)}
-              >
-                <div className="flex justify-between items-center">
-                  <div className="w-[70%]">
-                    <p className="text-gray-300">{item.name}</p>
-                    <p className="">{item.meaning}</p>
-                  </div>
-                  <div className="w-[30%]">
-                    <p className="text-gray-600 text-right">
-                      {item.created_at.split(" ")[0]}
-                    </p>
-                  </div>
-                </div>
-                {hoverThis === index && (
-                  <div className="absolute top-1/2 left-1/2 -translate-1/2 z-50">
-                    <div className="flex justify-center items-center gap-4 border-gray-200 rounded">
-                      <IconDetails
-                        className="text-2xl text-amber-200 cursor-pointer"
-                        title="View details"
+        {data && data?.length > 0 ? (
+          <ScrollArea className="h-full px-3" key={dynamicKey}>
+            {data?.map((item, index) => (
+              <div key={index}>
+                <div
+                  className="relative min-h-16 my-4 hover:bg-gray-700 hover:opacity-70"
+                  onMouseOver={() => setHoverThis(index)}
+                  onMouseLeave={() => setHoverThis(undefined)}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="w-[70%]">
+                      <p
+                        className="text-gray-300 hover:text-amber-200 cursor-pointer"
                         onClick={() => viewWordDetails(item.name)}
-                      />
-                      {mark != MarkKind.Mastered && (
-                        <Tooltip>
-                          <TooltipTrigger
+                      >
+                        {item.name}
+                      </p>
+                      <p className="">{item.meaning}</p>
+                    </div>
+                    <div className="w-[30%]">
+                      <p className="text-gray-600 text-right">
+                        {item.created_at.split(" ")[0]}
+                      </p>
+                    </div>
+                  </div>
+                  {hoverThis === index && (
+                    <div className="absolute top-1/2 right-1 -translate-y-1/2 z-50">
+                      <div className="flex justify-center items-center gap-4 border-gray-200 rounded">
+                        {mark != MarkKind.Mastered && (
+                          <Tooltip>
+                            <TooltipTrigger
+                              render={
+                                <IconMarker
+                                  className="text-blue-200 cursor-pointer"
+                                  title="Mark"
+                                />
+                              }
+                            />
+                            <TooltipContent
+                              className="bg-gray-200 text-gray-900 opacity-85"
+                              side="right"
+                            >
+                              <RadioGroup
+                                onValueChange={(value: MarkKind) =>
+                                  markSpecificWord(item.id, value)
+                                }
+                              >
+                                {mark === MarkKind.New && (
+                                  <div className="flex items-center gap-3">
+                                    <RadioGroupItem
+                                      title="Mark as `Unsure`"
+                                      className="bg-gray-600"
+                                      value={MarkKind.Unsure}
+                                      id="mark-unsure"
+                                    />
+                                    <Label htmlFor="mark-unsure">Unsure</Label>
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-3">
+                                  <RadioGroupItem
+                                    title="Mark as `Mastered`"
+                                    className="bg-gray-600"
+                                    value={MarkKind.Mastered}
+                                    id="mark-mastered"
+                                  />
+                                  <Label htmlFor="mark-mastered">
+                                    Mastered
+                                  </Label>
+                                </div>
+                              </RadioGroup>
+                            </TooltipContent>
+                          </Tooltip>
+                        )}
+                        <AlertDialog open={dialogOpen}>
+                          <AlertDialogTrigger
+                            nativeButton={false}
                             render={
-                              <IconMarker
-                                className="text-blue-200 cursor-pointer"
-                                title="Mark"
+                              <IconDelete
+                                className="text-2xl text-red-200 cursor-pointer"
+                                title="Delete this one"
+                                onClick={() => setDialogOpen(true)}
                               />
                             }
                           />
-                          <TooltipContent
-                            className="bg-gray-200 text-gray-900 opacity-85"
-                            side="right"
-                          >
-                            <RadioGroup
-                              onValueChange={(value: MarkKind) =>
-                                markSpecificWord(item.id, value)
-                              }
-                            >
-                              {mark === MarkKind.New && (
-                                <div className="flex items-center gap-3">
-                                  <RadioGroupItem
-                                    title="Mark as `Unsure`"
-                                    className="bg-gray-600"
-                                    value={MarkKind.Unsure}
-                                    id="mark-unsure"
-                                  />
-                                  <Label htmlFor="mark-unsure">Unsure</Label>
-                                </div>
-                              )}
-                              <div className="flex items-center gap-3">
-                                <RadioGroupItem
-                                  title="Mark as `Mastered`"
-                                  className="bg-gray-600"
-                                  value={MarkKind.Mastered}
-                                  id="mark-mastered"
-                                />
-                                <Label htmlFor="mark-mastered">Mastered</Label>
-                              </div>
-                            </RadioGroup>
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      <AlertDialog open={dialogOpen}>
-                        <AlertDialogTrigger
-                          nativeButton={false}
-                          render={
-                            <IconDelete
-                              className="text-2xl text-red-200 cursor-pointer"
-                              title="Delete this one"
-                              onClick={() => setDialogOpen(true)}
-                            />
-                          }
-                        />
-                        <AlertDialogContent className="bg-gray-300">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-gray-700"
-                              onClick={() => removeSpecificWord(item.id)}
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                          <AlertDialogContent className="bg-gray-300">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-gray-700"
+                                onClick={() => removeSpecificWord(item.id)}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
-                  </div>
+                  )}
+                </div>
+                {index < data.length - 1 && (
+                  <Separator className="mt-2 bg-gray-800" />
                 )}
               </div>
-              {index < data.length - 1 && (
-                <Separator className="mt-2 bg-gray-800" />
-              )}
-            </div>
-          ))}
-        </ScrollArea>
+            ))}
+          </ScrollArea>
+        ) : (
+          <div className="h-full flex items-center justify-center">
+            <p className="text-gray-500">Currently no data yet!</p>
+          </div>
+        )}
       </main>
     </>
   );

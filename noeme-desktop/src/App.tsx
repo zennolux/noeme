@@ -6,8 +6,10 @@ import {
   WebviewWindow,
 } from "@tauri-apps/api/webviewWindow";
 import { useEffect, useState } from "react";
-import { IoIosCloseCircleOutline as IconClose } from "react-icons/io";
-import { LiaHistorySolid as IconHistory } from "react-icons/lia";
+import {
+  IoIosCloseCircleOutline as IconClose,
+  IoMdArrowBack as IconBack,
+} from "react-icons/io";
 import { name, version } from "@/../package.json";
 import {
   getMonitorScreenshot,
@@ -40,7 +42,7 @@ export default function App() {
     new WebviewWindow("screenshot", {
       title: "noeme-screenshot",
       url: "/screenshot",
-      visible: true,
+      visible: false,
       decorations: false,
       maximized: true,
       transparent: true,
@@ -116,7 +118,7 @@ export default function App() {
       className="h-full bg-gray-900 backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
     >
       {child === NoemeChild.WordDetails && (
-        <IconHistory
+        <IconBack
           onClick={() => setChild(NoemeChild.LocalWords)}
           className="absolute -top-[0.15rem] -left-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
         />

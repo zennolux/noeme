@@ -57,6 +57,8 @@ export default function Screenshot() {
   useEffect(() => {
     getFullScreenImage();
 
+    setTimeout(() => currentWindow.show(), 0);
+
     window.addEventListener("keyup", (event) => {
       if (event.key != "Escape") {
         return;
