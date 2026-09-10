@@ -1,6 +1,5 @@
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { useEffect, useRef, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import { IoVolumeMediumOutline as IconVolume } from "react-icons/io5";
 import { FaExclamationTriangle as IconExclamation } from "react-icons/fa";
@@ -11,14 +10,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { AttrTag } from "@/components/AttrTag";
 import { getWordDetailsFromLocal, saveNewWord } from "@/lib/db";
+import { useParams } from "react-router";
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 
-export default function WordDetails({
-  word,
-}: {
-  word: { value: Noeme["word"]; shouldSaveToLocal: boolean } | undefined;
-}) {
+export default function Details() {
   const win = getCurrentWebviewWindow();
-  const wordEl = useRef(null);
+  const { word: defaultWord } = useParams<{ word: Noeme["word"] }>();
+  const [word, setWord] = useState<Noeme["word"] | undefined>(defaultWord);
   const [noeme, setNoeme] = useState<Noeme | undefined | null>(undefined);
   const [loading, setLoading] = useState(false);
   const [pronouncing, setPronouncing] = useState(false);
@@ -45,11 +44,11 @@ export default function WordDetails({
   }
 
   async function getWordDetails() {
-    if (!word?.value) {
+    if (!word) {
       return;
     }
 
-    if (!/[a-zA-Z]+/.test(word?.value)) {
+    if (!/[a-zA-Z]+/.test(word)) {
       return;
     }
 
@@ -60,11 +59,11 @@ export default function WordDetails({
     setNoeme(undefined);
     setLoading(true);
 
-    let wordDetails = await getWordDetailsFromLocal(word.value);
+    let wordDetails = await getWordDetailsFromLocal(word);
 
     if (!wordDetails) {
       wordDetails = await invoke<Noeme>("get_word_details", {
-        word: word.value,
+        word,
       }).catch((err: string) => {
         setNoeme(null);
         setLoading(false);
@@ -79,15 +78,28 @@ export default function WordDetails({
     setNoeme(wordDetails);
     setTimeout(() => setLoading(false), 0);
 
-    word.shouldSaveToLocal && (await saveNewWord(wordDetails));
+    await saveNewWord(wordDetails);
   }
 
   useEffect(() => {
-    if (!word?.value) {
+    if (!word) {
       return;
     }
     getWordDetails();
-  }, [word?.value]);
+  }, [word]);
+
+  useEffect(() => {
+    const unlistenWordRecognized = listen<Noeme["word"]>(
+      "word-recognized",
+      (e) => {
+        setWord(e.payload);
+      }
+    );
+
+    return () => {
+      unlistenWordRecognized.then((fn) => fn());
+    };
+  }, []);
 
   return (
     <>
@@ -97,10 +109,7 @@ export default function WordDetails({
             data-tauri-drag-region
             className="select-none h-[8%] flex flex-col items-center"
           >
-            <h1
-              ref={wordEl}
-              className="flex-1 text-2xl font-bold hover:text-amber-100"
-            >
+            <h1 className="flex-1 text-2xl font-bold hover:text-amber-100">
               {noeme?.word}
             </h1>
             <div className="flex-1 flex gap-2 ">

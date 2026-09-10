@@ -1,6 +1,6 @@
 import "@/index.css";
 import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
 import {
   getCurrentWebviewWindow,
   WebviewWindow,
@@ -22,18 +22,13 @@ import {
   startListening,
   stopListening,
 } from "tauri-plugin-user-input-api";
-import { NoemeChild } from "@/lib/utils";
+import { Outlet, useLocation } from "react-router";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-import WordDetails from "@/components/WordDetails";
-import LocalWords from "@/components/LocalWords";
-
-export default function App() {
+export default function Noeme() {
   const win = getCurrentWebviewWindow();
-  const [word, setWord] = useState<{
-    value: Noeme["word"];
-    shouldSaveToLocal: boolean;
-  }>();
-  const [child, setChild] = useState<NoemeChild>();
+  const [recognizedWord, setRecognizedWord] = useState<Noeme["word"]>();
+  const location = useLocation();
 
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
@@ -67,10 +62,16 @@ export default function App() {
         return;
       }
 
-      setWord({ value: word, shouldSaveToLocal: true });
-      setChild(NoemeChild.WordDetails);
+      setRecognizedWord(word);
     });
   }
+
+  useEffect(() => {
+    if (!recognizedWord) {
+      return;
+    }
+    emit("word-recognized", recognizedWord);
+  }, [recognizedWord]);
 
   useEffect(() => {
     listenGlobalMouseEvent();
@@ -97,12 +98,9 @@ export default function App() {
     const unlistenOcrRecognized = listen<Noeme["word"]>(
       "ocr-recognized",
       (event) => {
-        setWord({ value: event.payload, shouldSaveToLocal: true });
-        setChild(NoemeChild.WordDetails);
+        setRecognizedWord(event.payload);
       }
     );
-
-    setChild(NoemeChild.LocalWords);
 
     return () => {
       stopListening();
@@ -113,37 +111,35 @@ export default function App() {
   }, []);
 
   return (
-    <div
-      data-tauri-drag-region
-      className="h-full bg-gray-900 backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
-    >
-      {child === NoemeChild.WordDetails && (
-        <IconBack
-          onClick={() => setChild(NoemeChild.LocalWords)}
-          className="absolute -top-[0.15rem] -left-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
+    <TooltipProvider>
+      <div
+        data-tauri-drag-region
+        className="h-full bg-gray-900 backdrop-blur-md border border-white/5 shadow-2xl text-gray-400"
+      >
+        {location.pathname.startsWith("/details") && (
+          <IconBack
+            onClick={() => window.location.replace("/")}
+            className="absolute -top-[0.15rem] -left-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
+          />
+        )}
+        <IconClose
+          title="Close the window"
+          className="absolute -top-[0.15rem] -right-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
+          onClick={() => win.close()}
         />
-      )}
-      <IconClose
-        title="Close the window"
-        className="absolute -top-[0.15rem] -right-[0.15rem] text-2xl text-gray-500 hover:text-gray-300"
-        onClick={() => win.close()}
-      />
-      {child === NoemeChild.WordDetails ? (
-        <WordDetails word={word} />
-      ) : (
-        <LocalWords setWord={setWord} setChild={setChild} />
-      )}
-      <footer className="absolute bottom-[2%] left-1/2 -translate-x-1/2">
-        <a
-          title="Visit offical website"
-          href="https://github.com/zennolux/noeme"
-          target="_blank"
-          className="underline underline-offset-4 text-gray-500 hover:text-amber-100"
-        >
-          {" "}
-          {`${name} v${version}`}
-        </a>
-      </footer>
-    </div>
+        <Outlet />
+        <footer className="absolute bottom-[2%] left-1/2 -translate-x-1/2">
+          <a
+            title="Visit offical website"
+            href="https://github.com/zennolux/noeme"
+            target="_blank"
+            className="underline underline-offset-4 text-gray-500 hover:text-amber-100"
+          >
+            {" "}
+            {`${name} v${version}`}
+          </a>
+        </footer>
+      </div>
+    </TooltipProvider>
   );
 }

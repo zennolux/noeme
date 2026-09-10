@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getLocalWords,
   type LocalWord,
@@ -17,7 +17,6 @@ import { RiDeleteRow as IconDelete } from "react-icons/ri";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { NoemeChild } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -29,18 +28,10 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { NavLink } from "react-router";
+import { listen } from "@tauri-apps/api/event";
 
-export default function LocalWords({
-  setWord,
-  setChild: setChild,
-}: {
-  setWord: Dispatch<
-    SetStateAction<
-      { value: Noeme["word"]; shouldSaveToLocal: boolean } | undefined
-    >
-  >;
-  setChild: Dispatch<SetStateAction<NoemeChild | undefined>>;
-}) {
+export default function Index() {
   const [mark, setMark] = useState<MarkKind>(MarkKind.New);
   const [total, setTotal] = useState(0);
   const [data, setData] = useState<Array<LocalWord>>();
@@ -71,14 +62,22 @@ export default function LocalWords({
     setDialogOpen(false);
   }
 
-  function viewWordDetails(word: Noeme["word"]) {
-    setWord({ value: word, shouldSaveToLocal: false });
-    setChild(NoemeChild.WordDetails);
-  }
-
   useEffect(() => {
     setLocalWords(mark);
   }, [mark]);
+
+  useEffect(() => {
+    const unlistenWordRecognized = listen<Noeme["word"]>(
+      "word-recognized",
+      (e) => {
+        location.replace(`/details/${e.payload}`);
+      }
+    );
+
+    return () => {
+      unlistenWordRecognized.then((fn) => fn());
+    };
+  }, []);
 
   return (
     <>
@@ -140,11 +139,10 @@ export default function LocalWords({
                 >
                   <div className="flex justify-between items-center">
                     <div className="w-[70%]">
-                      <p
-                        className="text-gray-300 hover:text-amber-200 cursor-pointer"
-                        onClick={() => viewWordDetails(item.name)}
-                      >
-                        {item.name}
+                      <p className="text-gray-300 hover:text-amber-200 cursor-pointer">
+                        <NavLink to={`/details/${item.name}`}>
+                          {item.name}
+                        </NavLink>
                       </p>
                       <p className="">{item.meaning}</p>
                     </div>
