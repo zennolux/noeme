@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { load } from "@tauri-apps/plugin-store";
 import {
   getLocalWords,
   type LocalWord,
@@ -32,11 +33,11 @@ import { NavLink } from "react-router";
 import { listen } from "@tauri-apps/api/event";
 
 export default function Index() {
-  const [mark, setMark] = useState<MarkKind>(MarkKind.New);
+  const [mark, setMark] = useState<MarkKind>();
   const [total, setTotal] = useState(0);
   const [data, setData] = useState<Array<LocalWord>>();
   const [hoverThis, setHoverThis] = useState<number>();
-  const [dynamicKey, setDynamicKey] = useState<string>();
+  const [scroolAreaKey, setScroolAreaKey] = useState<string>();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   async function setLocalWords(mark: MarkKind) {
@@ -44,7 +45,7 @@ export default function Index() {
 
     setTotal(total);
     setData(data);
-    setDynamicKey(`${mark}-${total}`);
+    setScroolAreaKey(`${mark}-${total}`);
   }
 
   async function markSpecificWord(id: number, targetMark: MarkKind) {
@@ -62,11 +63,30 @@ export default function Index() {
     setDialogOpen(false);
   }
 
+  async function memorizeMark(mark: MarkKind) {
+    const store = await load("store.json");
+
+    await store.set("last_mark", mark);
+    await store.save();
+
+    setMark(mark);
+  }
+
+  async function getMemorizedMark() {
+    const store = await load("store.json");
+
+    return await store.get<MarkKind>("last_mark");
+  }
+
   useEffect(() => {
-    setLocalWords(mark);
+    setLocalWords(mark!);
   }, [mark]);
 
   useEffect(() => {
+    getMemorizedMark().then((mark) => {
+      setMark(mark || MarkKind.New);
+    });
+
     const unlistenWordRecognized = listen<Noeme["word"]>(
       "word-recognized",
       (e) => {
@@ -112,7 +132,7 @@ export default function Index() {
                       ? "bg-amber-100 text-gray-700"
                       : "bg-gray-200 text-gray-500"
                   } text-center rounded-2xl`}
-                  onClick={() => setMark(item.value)}
+                  onClick={() => memorizeMark(item.value)}
                 >
                   {item.name}
                 </p>
@@ -129,7 +149,7 @@ export default function Index() {
       <Separator className="bg-gray-700" />
       <main className="h-[84%] select-none">
         {data && data?.length > 0 ? (
-          <ScrollArea className="h-full px-3" key={dynamicKey}>
+          <ScrollArea className="h-full px-3" key={scroolAreaKey}>
             {data?.map((item, index) => (
               <div key={index}>
                 <div
