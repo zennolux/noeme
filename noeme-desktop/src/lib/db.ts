@@ -60,10 +60,16 @@ export async function getWordDetailsFromLocal(
 }
 
 export async function saveNewWord(noeme: Noeme) {
+  const isAreadyExists = await getWordDetailsFromLocal(noeme.word);
+
+  if (isAreadyExists) {
+    return;
+  }
+
   const db = await loadDatabse();
 
   return db.execute(
-    "REPLACE INTO vocabularies (name, meaning, mark, details, created_at,updated_at) VALUES ($1, $2, $3, $4, $5, $6)",
+    "INSERT INTO vocabularies (name, meaning, mark, details, created_at,updated_at) VALUES ($1, $2, $3, $4, $5, $6)",
     [
       noeme.word.toLowerCase(),
       noeme.basic_meanings[0]?.value,
