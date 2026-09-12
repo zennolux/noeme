@@ -7,8 +7,6 @@ import { VscRunBelow as IconBelow } from "react-icons/vsc";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Kbd, KbdGroup } from "@/components/ui/kbd";
-import { AttrTag } from "@/components/AttrTag";
 import { getWordDetailsFromLocal, saveNewWord } from "@/lib/db";
 import { useParams } from "react-router";
 import { invoke } from "@tauri-apps/api/core";
@@ -56,8 +54,8 @@ export default function Details() {
       win.show();
     }
 
-    setNoeme(undefined);
     setLoading(true);
+    setNoeme(undefined);
 
     let wordDetails = await getWordDetailsFromLocal(word);
 
@@ -112,27 +110,29 @@ export default function Details() {
             <h1 className="flex-1 text-2xl font-bold hover:text-amber-100">
               {noeme?.word}
             </h1>
-            <div className="flex-1 flex gap-2 ">
-              <p>
-                /
-                <i className="text-gray-500">
-                  {noeme?.pronunciation.phonetic_symbol}
-                </i>
-                /
-              </p>
-              <IconVolume
-                className={`text-2xl text-amber-100 hover:text-amber-200 ${
-                  pronouncing && "animate-ping"
-                }`}
-                onClick={() =>
-                  play(
-                    noeme.pronunciation.audio_url,
-                    () => setPronouncing(true),
-                    () => setPronouncing(false)
-                  )
-                }
-              />
-            </div>
+            {noeme.pronunciation.phonetic_symbol.length > 0 && (
+              <div className="flex-1 flex gap-2 ">
+                <p>
+                  /
+                  <i className="text-gray-500">
+                    {noeme?.pronunciation.phonetic_symbol}
+                  </i>
+                  /
+                </p>
+                <IconVolume
+                  className={`text-2xl text-amber-100 hover:text-amber-200 ${
+                    pronouncing && "animate-ping"
+                  }`}
+                  onClick={() =>
+                    play(
+                      noeme.pronunciation.audio_url,
+                      () => setPronouncing(true),
+                      () => setPronouncing(false)
+                    )
+                  }
+                />
+              </div>
+            )}
           </header>
           <Separator className="bg-gray-700" />
           <main className="h-[84%] select-none">
@@ -156,7 +156,9 @@ export default function Details() {
                       className="flex items-center gap-2 mt-2"
                     >
                       <dt>
-                        <AttrTag>{item.attr}</AttrTag>
+                        <div className="w-14 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
+                          {item.attr}
+                        </div>
                       </dt>
                       <dd className="w-[90%]">{item.value}</dd>
                     </dl>
@@ -173,7 +175,9 @@ export default function Details() {
                   </div>
                   {noeme.advanced_meanings.map((item) => (
                     <div key={item.attr} className="mt-2">
-                      <AttrTag>{item.attr}</AttrTag>
+                      <div className="w-14 h-6 flex justify-center items-center text-gray-400 bg-gray-700">
+                        {item.attr}
+                      </div>
                       {item.values.map((value, index) => (
                         <div key={index}>
                           <dl className="flex items-center gap-4 mt-2">
@@ -290,33 +294,11 @@ export default function Details() {
           </main>
         </div>
       ) : (
-        <div
-          data-tauri-drag-region
-          className="h-full flex flex-col justify-center gap-4 px-4"
-        >
-          {noeme === undefined ? (
-            <>
-              <h1 className="font-bold">Tips for getting started:</h1>
-              <div className="space-y-2">
-                <p>
-                  <span className="text-blue-200">1.</span> Select a word from
-                  anywhere of your system.
-                </p>
-                <div className="flex gap-2">
-                  <p className="text-blue-200">2.</p>
-                  <KbdGroup>
-                    <span className="mr-2">Press</span>
-                    <Kbd>Ctrl</Kbd>
-                    <span>+</span>
-                    <Kbd>Alt</Kbd>
-                    <span>+</span>
-                    <Kbd>J</Kbd>
-                    <span className="ml-2">to do screenshot.</span>
-                  </KbdGroup>
-                </div>
-              </div>
-            </>
-          ) : (
+        errMsg.length > 0 && (
+          <div
+            data-tauri-drag-region
+            className="h-full flex flex-col justify-center gap-4 px-4"
+          >
             <div className="space-y-4">
               <div className="flex flex-col items-center justify-center space-y-2">
                 <IconExclamation className="text-4xl text-amber-100" />
@@ -344,8 +326,8 @@ export default function Details() {
                 </p>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )
       )}
     </>
   );
