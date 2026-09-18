@@ -11,6 +11,7 @@ import { getWordDetailsFromLocal, saveNewWord } from "@/lib/db";
 import { useParams } from "react-router";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { onSpeechEvent, speak } from "tauri-plugin-tts-api";
 
 export default function Details() {
   const win = getCurrentWebviewWindow();
@@ -18,28 +19,10 @@ export default function Details() {
   const [word, setWord] = useState<Noeme["word"] | undefined>(defaultWord);
   const [noeme, setNoeme] = useState<Noeme | undefined | null>(undefined);
   const [loading, setLoading] = useState(false);
-  const [pronouncing, setPronouncing] = useState(false);
-  const [playing, setPlaying] = useState<{ [key: number]: boolean }>();
-  const [showPlayingIcon, setShowPlayingIcon] = useState<{
-    [key: number]: boolean;
-  }>();
+  const [playing, setPlaying] = useState(false);
+  const [playingFor, setPlayingFor] = useState<["Word", "Sentences"][number]>();
+  const [hoverThis, setHoverThis] = useState<number>();
   const [errMsg, setErrMsg] = useState("");
-
-  function play(
-    url: string,
-    onPlaying: Function | undefined = undefined,
-    onEnded: Function | undefined = undefined
-  ) {
-    if (url.length < 1) {
-      return;
-    }
-
-    const audio = new Audio(url);
-    audio.play();
-
-    onPlaying && audio.addEventListener("playing", () => onPlaying());
-    onEnded && audio.addEventListener("ended", () => onEnded());
-  }
 
   async function getWordDetails() {
     if (!word) {
@@ -87,6 +70,10 @@ export default function Details() {
   }, [word]);
 
   useEffect(() => {
+    console.info(playing);
+  }, [playing]);
+
+  useEffect(() => {
     const unlistenWordRecognized = listen<Noeme["word"]>(
       "word-recognized",
       (e) => {
@@ -94,8 +81,18 @@ export default function Details() {
       }
     );
 
+    const unlistenSpeechStarted = onSpeechEvent("speech:start", () => {
+      setPlaying(true);
+    });
+
+    const unlistenSpeechFinished = onSpeechEvent("speech:finish", () => {
+      setPlaying(false);
+    });
+
     return () => {
       unlistenWordRecognized.then((fn) => fn());
+      unlistenSpeechStarted.then((fn) => fn());
+      unlistenSpeechFinished.then((fn) => fn());
     };
   }, []);
 
@@ -121,15 +118,26 @@ export default function Details() {
                 </p>
                 <IconVolume
                   className={`text-2xl text-amber-100 hover:text-amber-200 ${
-                    pronouncing && "animate-ping"
+                    playing && playingFor == "Word" && "animate-ping"
                   }`}
-                  onClick={() =>
-                    play(
-                      noeme.pronunciation.audio_url,
-                      () => setPronouncing(true),
-                      () => setPronouncing(false)
-                    )
-                  }
+                  onClick={async () => {
+                    setPlayingFor("Word");
+
+                    word!.split("").forEach(async (text) => {
+                      await speak({
+                        language: "en-US",
+                        text,
+                        queueMode: "add",
+                      });
+                    });
+
+                    await speak({
+                      language: "en-US",
+                      text: word!,
+                      queueMode: "add",
+                      rate: 0.6,
+                    });
+                  }}
                 />
               </div>
             )}
@@ -215,20 +223,10 @@ export default function Details() {
                         </dt>
                         <dd className="w-[95%]">
                           <p
-                            className={`${
-                              (showPlayingIcon && showPlayingIcon[index]) ||
-                              (playing && playing[index])
-                                ? "bg-gray-700 opacity-90"
-                                : ""
-                            } relative`}
-                            onMouseOver={() =>
-                              setShowPlayingIcon({ [index]: true })
-                            }
-                            onMouseLeave={() => {
-                              if (!playing || !playing[index]) {
-                                setShowPlayingIcon({ [index]: false });
-                              }
-                            }}
+                            className={`relative ${
+                              hoverThis === index && "bg-gray-700 opacity-90"
+                            }`}
+                            onMouseOver={() => setHoverThis(index)}
                           >
                             {parse(
                               item.en.replace(
@@ -242,22 +240,21 @@ export default function Details() {
                                 `<i className="underline underline-offset-4 text-amber-100">$1</i>`
                               )
                             )}
-                            {showPlayingIcon && showPlayingIcon[index] && (
+                            {hoverThis === index && (
                               <IconVolume
                                 className={`text-2xl text-amber-200 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
-                                  playing && playing[index] && "animate-ping"
+                                  playing &&
+                                  playingFor == "Sentences" &&
+                                  "animate-ping"
                                 }`}
-                                onClick={() => {
-                                  play(
-                                    item.audio_url,
-                                    () => {
-                                      setPlaying({ [index]: true });
-                                    },
-                                    () => {
-                                      setShowPlayingIcon({ [index]: false });
-                                      setPlaying({ [index]: false });
-                                    }
-                                  );
+                                onClick={async () => {
+                                  setPlayingFor("Sentences");
+
+                                  await speak({
+                                    language: "en-US",
+                                    text: item.en,
+                                    rate: 0.6,
+                                  });
                                 }}
                               />
                             )}

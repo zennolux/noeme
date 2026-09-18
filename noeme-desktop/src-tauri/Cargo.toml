@@ -32,6 +32,7 @@ noeme = { path = "../../noeme-core" }
 strum = "0.28.0"
 strum_macros = "0.28.0"
 tauri-plugin-sql = { version = "2", features = ["sqlite"] }
+tauri-plugin-tts = { version = "0.2.1", features = ["ts-bindings"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"

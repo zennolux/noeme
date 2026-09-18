@@ -17,6 +17,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_screenshots::init())
         .plugin(tauri_plugin_user_input::init())
+        .plugin(tauri_plugin_tts::init())
         .plugin(
             tauri_plugin_window_state::Builder::default()
                 .with_denylist(&["screenshot"])

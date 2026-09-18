@@ -20,6 +20,7 @@
     "user-input:default",
     "window-state:default",
     "sql:default",
-    "sql:allow-execute"
+    "sql:allow-execute",
+    "tts:default"
   ]
 }
