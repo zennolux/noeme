@@ -70,10 +70,6 @@ export default function Details() {
   }, [word]);
 
   useEffect(() => {
-    console.info(playing);
-  }, [playing]);
-
-  useEffect(() => {
     const unlistenWordRecognized = listen<Noeme["word"]>(
       "word-recognized",
       (e) => {
@@ -117,7 +113,7 @@ export default function Details() {
                   /
                 </p>
                 <IconVolume
-                  className={`text-2xl text-amber-100 hover:text-amber-200 ${
+                  className={`cursor-pointer text-2xl text-amber-100 hover:text-amber-200 ${
                     playing && playingFor == "Word" && "animate-ping"
                   }`}
                   onClick={async () => {
@@ -242,7 +238,7 @@ export default function Details() {
                             )}
                             {hoverThis === index && (
                               <IconVolume
-                                className={`text-2xl text-amber-200 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
+                                className={`cursor-pointer text-2xl text-amber-200 z-50 absolute left-1/2 top-1/2 -translate-1/2 ${
                                   playing &&
                                   playingFor == "Sentences" &&
                                   "animate-ping"
