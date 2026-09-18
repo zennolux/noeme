@@ -83,6 +83,7 @@ export default function Details() {
 
     const unlistenSpeechFinished = onSpeechEvent("speech:finish", () => {
       setPlaying(false);
+      setHoverThis(undefined);
     });
 
     return () => {
@@ -220,9 +221,14 @@ export default function Details() {
                         <dd className="w-[95%]">
                           <p
                             className={`relative ${
-                              hoverThis === index && "bg-gray-700 opacity-90"
+                              hoverThis === index
+                                ? "bg-gray-700 opacity-90"
+                                : ""
                             }`}
                             onMouseOver={() => setHoverThis(index)}
+                            onMouseLeave={() =>
+                              !playing && setHoverThis(undefined)
+                            }
                           >
                             {parse(
                               item.en.replace(
