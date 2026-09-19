@@ -120,18 +120,9 @@ export default function Details() {
                   onClick={async () => {
                     setPlayingFor("Word");
 
-                    word!.split("").forEach(async (text) => {
-                      await speak({
-                        language: "en-US",
-                        text,
-                        queueMode: "add",
-                      });
-                    });
-
                     await speak({
                       language: "en-US",
                       text: word!,
-                      queueMode: "add",
                       rate: 0.6,
                     });
                   }}
