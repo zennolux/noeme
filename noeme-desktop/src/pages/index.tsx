@@ -84,7 +84,10 @@ export default function Index() {
 
   useEffect(() => {
     getMemorizedMark().then((mark) => {
-      setMark(mark || MarkKind.New);
+      const currentMark = mark || MarkKind.New;
+
+      setMark(currentMark);
+      setLocalWords(currentMark);
     });
 
     const unlistenWordRecognized = listen<Noeme["word"]>(
