@@ -3,6 +3,7 @@ import Noeme from "@/components/Noeme";
 import Screenshot from "@/pages/screenshot";
 import Index from "@/pages";
 import Details from "@/pages/details";
+import Spelling from "@/pages/spelling";
 
 export default createBrowserRouter([
   {
@@ -22,5 +23,9 @@ export default createBrowserRouter([
   {
     path: "/screenshot",
     Component: Screenshot,
+  },
+  {
+    path: "/spelling",
+    Component: Spelling,
   },
 ]);
