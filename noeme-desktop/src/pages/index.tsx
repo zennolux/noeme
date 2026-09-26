@@ -13,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { LuSpellCheck2 as IconSpell } from "react-icons/lu";
 import { FaMarker as IconMarker } from "react-icons/fa";
 import { RiDeleteRow as IconDelete } from "react-icons/ri";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -30,7 +31,8 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { NavLink } from "react-router";
-import { listen } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 export default function Index() {
   const [mark, setMark] = useState<MarkKind>();
@@ -39,6 +41,25 @@ export default function Index() {
   const [hoverThis, setHoverThis] = useState<number>();
   const [scroolAreaKey, setScroolAreaKey] = useState<string>();
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  async function invokeSpellingWindow(word: Noeme["word"]) {
+    const label = "spelling";
+    const win = await WebviewWindow.getByLabel(label);
+
+    win ||
+      new WebviewWindow(label, {
+        title: "noeme-spelling",
+        url: "/spelling",
+        decorations: false,
+        transparent: true,
+        alwaysOnTop: true,
+        visible: false,
+        width: 400,
+        height: 40,
+      });
+
+    emit("word-spelling", word);
+  }
 
   async function setLocalWords(mark: MarkKind) {
     const { total, data } = await getLocalWords(mark);
@@ -178,6 +199,11 @@ export default function Index() {
                   {hoverThis === index && (
                     <div className="absolute top-1/2 right-1 -translate-y-1/2 z-50">
                       <div className="flex justify-center items-center gap-4 border-gray-200 rounded">
+                        <IconSpell
+                          className="text-pink-200 cursor-pointer text-2xl"
+                          title="Spelling this one on the floating window"
+                          onClick={() => invokeSpellingWindow(item.name)}
+                        />
                         {mark != MarkKind.Mastered && (
                           <Tooltip>
                             <TooltipTrigger
