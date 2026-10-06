@@ -30,19 +30,6 @@ export default function Noeme() {
   const [recognizedWord, setRecognizedWord] = useState<Noeme["word"]>();
   const location = useLocation();
 
-  async function createSpellingWindow() {
-    new WebviewWindow("spelling", {
-      title: "noeme-spelling",
-      url: "/spelling",
-      decorations: false,
-      transparent: true,
-      alwaysOnTop: true,
-      visible: false,
-      width: 400,
-      height: 40,
-    });
-  }
-
   async function createScreenshotableWindow() {
     const monitors = await getScreenshotableMonitors();
     await getMonitorScreenshot(monitors[0].id);
@@ -87,7 +74,6 @@ export default function Noeme() {
   }, [recognizedWord]);
 
   useEffect(() => {
-    createSpellingWindow();
     listenGlobalMouseEvent();
 
     const unlistenHotkeyPressed = listen<
